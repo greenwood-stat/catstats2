@@ -1,0 +1,46 @@
+Package: catstats2
+Title: Upper Level Statistics for Montana State University Bobcats
+Version: 0.1
+Authors@R: 
+    person(given = "Mark",
+           family = "Greenwood",
+           role = c("aut", "cre"),
+           email = "greenwood@montana.edu")
+Description: Contains a suite of things that are used in instruction at Montana State University. Intended to make working in RStudio easier for the students at MSU. Also supports the textbooks "Intermediate Statistics with R" written by Mark Greenwood and "Montana State Introductory Statistics with R" written by Nicole Carnegie, Stacey Hancock, Elijah Meyer, Jade Schmidt, and Melinda Yager. This package contains functions for enhanced interaction plots and simulation-based inference. It also will install most packages needed for the materials in the courses.
+Depends:
+    R (>= 4.1)
+Imports:
+    car,
+    carData,
+    corrplot,
+    effects,
+    ggthemes,
+    knitr,
+    mosaic,
+    mosaicData,
+    multcomp,
+    MuMIn,
+    nlme,
+    openintro,
+    psych,
+    RColorBrewer,
+    rmarkdown,
+    tidyverse,
+    viridis,
+    yarrr
+Suggests:
+    alr4,
+    coneproj,
+    faraway,
+    heplots,
+    MASS,
+    poLCA,
+    Sleuth3,
+    smdata,
+    spuRs,
+    survey
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
