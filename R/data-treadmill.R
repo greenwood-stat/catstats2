@@ -19,7 +19,10 @@
 #' @name treadmill
 #' @docType data
 #' @references
-#'  Westfall, Peter H., S. Stanley Young, and S. Paul Wright.
-#'  "On adjusting P-values for multiplicity." Biometrics (1993): 941-945.
+#' Westfall, Peter H., and S. Stanley Young. 1993. Resampling-Based
+#' Multiple Testing: Examples and Methods for p-Value Adjustment. New York: Wiley.
 #' @keywords data treadmill fitness
+#' @examples
+#' boxplot(treadmill$RunTime, ylab = "1.5 Mile Run Time (minutes)",
+#'   main = "Boxplot of the Run Times of n = 31 participants")
 "treadmill"
