@@ -23,7 +23,7 @@
 #' ToothGrowth %>% intplot_gg(measurevar = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
 
 #' @export
-intplot_gg <- function (measurevar = NULL, groupvars = NULL, data = NULL, na.rm=FALSE,
+intplot_gg <- function (data = NULL, measurevar = NULL, groupvars = NULL, na.rm=FALSE,
                         conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3)
 {
   #Function to generate a plot array that have pirateplot-ish plots in off diagonals with single explanatory variables
@@ -38,8 +38,6 @@ intplot_gg <- function (measurevar = NULL, groupvars = NULL, data = NULL, na.rm=
   if(!require("viridis")) stop("you need to install viridis")
   if(!require("patchwork")) stop("you need to install patchwork")
   if(!require("ggpubr")) stop("you need to install ggpubr")
-
-  summaryinfo <- summarySE(data = data, measurevar = measurevar, groupvars = groupvars, na.rm = na.rm, conf.level = conf.level)
 
   pd <- position_dodge(pd)
 
@@ -61,6 +59,14 @@ intplot_gg <- function (measurevar = NULL, groupvars = NULL, data = NULL, na.rm=
   }
 
   summaryinfo <- summarySE(data = data, measurevar = measurevar, groupvars = groupvars, na.rm = na.rm, conf.level = conf.level)
+
+  if(min(summaryinfo$N)<20 & min(summaryinfo$N) >= 3){
+    print(paste0("Warning, one or more of the combinations of factor variables has a small sample size, shapes of violins for small group sizes can be misleading. The least frequently observed combination has only ", min(summaryinfo$N), " observations." ))
+  }
+
+  if(min(summaryinfo$N)<3){
+    print(paste0("Warning, one or more of the combinations of factor variables has an extremely small sample size. The least frequently observed level has only ", min(summaryinfo$N), " observations. You likely have insufficient sample size to do reliable inference at these combinations." ))
+  }
 
 
   if(numberXs == 1){

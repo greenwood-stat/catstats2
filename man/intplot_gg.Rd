@@ -5,9 +5,9 @@
 \title{Interaction Plot array with confidence intervals with ggplot}
 \usage{
 intplot_gg(
+  data = NULL,
   measurevar = NULL,
   groupvars = NULL,
-  data = NULL,
   na.rm = FALSE,
   conf.level = 0.95,
   .drop = TRUE,
