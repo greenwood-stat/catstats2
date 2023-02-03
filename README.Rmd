@@ -1,3 +1,20 @@
+---
+output: github_document
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  eval = FALSE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+library(knitr)
+```
+
+
 # README
 
 This is an R package in support of "Linear Mixed Models with Applications and Extensions in R" by Mark Greenwood that is currently under development.  Currently, it is only available on GitHub.  
