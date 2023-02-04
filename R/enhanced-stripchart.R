@@ -39,6 +39,8 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
 
   if(length(formula[[3]])>1){return(print("Use intplot_gg or pirateplot to visualize interactions of multiple categorical variables on the response."))}
 
+  data <- as.data.frame(data)
+
   response <- eval(parse(text=as.character(formula[[2]])), data)
   respname <- formula[[2]]
   x.factor <- factor(eval(parse(text=as.character(formula[[3]])), data))

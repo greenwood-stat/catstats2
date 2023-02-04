@@ -6,18 +6,19 @@
 \usage{
 intplot_gg(
   data = NULL,
-  measurevar = NULL,
+  response = NULL,
   groupvars = NULL,
   na.rm = FALSE,
   conf.level = 0.95,
   .drop = TRUE,
   pd = 0.1,
   array = T,
-  ptalpha = 0.3
+  ptalpha = 0.3,
+  ylim_manual = NULL
 )
 }
 \arguments{
-\item{measurevar}{the name of a column that contains the variable to be summarized (response variable)}
+\item{response}{the name of a column that contains the variable to be summarized (response variable)}
 
 \item{groupvars}{a vector containing names of columns that contain grouping variables}
 
@@ -26,6 +27,8 @@ intplot_gg(
 \item{pd}{position dodge to shift groups (default is 0.1)}
 
 \item{ptalpha}{alpha value for the points, set to 0 to hide points and just view means, CIs, and violins}
+
+\item{ylim_manual}{vector of lower and upper y-axis limits for all plots}
 
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }
@@ -39,11 +42,11 @@ Function for making nice looking interaction plot (both versions) with observati
 \examples{
 # must have the carData package installed
 data(TitanicSurvival, package = "carData")
-intplot_gg(measurevar = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T)
-intplot_gg(measurevar = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
-intplot_gg(measurevar = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
-intplot_gg(measurevar = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T, ptalpha = .5, pd = .5)
-intplot_gg(data = TitanicSurvival, measurevar = "age", groupvars = "sex", na.rm = T, conf.level = 0.95)
+intplot_gg(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T)
+intplot_gg(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
+intplot_gg(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
+intplot_gg(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T, ptalpha = .5, pd = .5)
+intplot_gg(data = TitanicSurvival, response = "age", groupvars = "sex", na.rm = T, conf.level = 0.95)
 data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
-ToothGrowth \%>\% intplot_gg(measurevar = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
+ToothGrowth \%>\% intplot_gg(response = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
 }
