@@ -31,6 +31,5 @@
 #'
 #' @keywords data safety vehicle bicycle
 #' @examples
-#' library(yarrr)
-#' pirateplot(Distance ~ Condition, data = cardist_2014, inf.method = "ci", inf.disp = "line")
+#' enhanced_stripchart(Distance ~ Condition, data = cardist_2014)
 "cardist_2014"

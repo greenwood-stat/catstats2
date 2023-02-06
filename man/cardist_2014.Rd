@@ -32,8 +32,7 @@ POLITE: Yellow reflective vest with blue and white checked banding and the words
 They collected data (distance to the vehicle in cm for each car “overtake”).
 }
 \examples{
-library(yarrr)
-pirateplot(Distance ~ Condition, data = cardist_2014, inf.method = "ci", inf.disp = "line")
+enhanced_stripchart(Distance ~ Condition, data = cardist_2014)
 }
 \references{
 Walker, Ian, Ian Garrard, and Felicity Jowitt. 2014. “The Influence of a

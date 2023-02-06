@@ -62,22 +62,22 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
   if(is.null(ylim_manual)){ylim_manual <- c(min(data[,colforresp]), max(data[,colforresp]))}
 
   if(dim(data)[1] < dim1){
-    print(paste(dim1 - dim(data)[1], "missing observations present on variables used, removed from all plots"))
+    warning(paste(dim1 - dim(data)[1], "missing observations present on variables used, removed from all plots"))
   }
 
   summaryinfo <- summarySE(data = data, measurevar = response, groupvars = groupvars, na.rm = na.rm, conf.level = conf.level)
 
   if(min(summaryinfo$N)<20 & min(summaryinfo$N) >= 3){
-    print(paste0("Warning, one or more of the combinations of factor variables has a small sample size, shapes of violins for small group sizes can be misleading. The least frequently observed combination has only ", min(summaryinfo$N), " observations." ))
+    warning(paste0("Warning, one or more of the combinations of factor variables has a small sample size, shapes of violins for small group sizes can be misleading. The least frequently observed combination has only ", min(summaryinfo$N), " observations." ))
   }
 
   if(min(summaryinfo$N)<3){
-    print(paste0("Warning, one or more of the combinations of factor variables has an extremely small sample size. The least frequently observed level has only ", min(summaryinfo$N), " observations. You likely have insufficient sample size to do reliable inference at these combinations." ))
+    warning(paste0("Warning, one or more of the combinations of factor variables has an extremely small sample size. The least frequently observed level has only ", min(summaryinfo$N), " observations. You likely have insufficient sample size to do reliable inference at these combinations." ))
   }
 
 
   if(numberXs == 1){
-    print("This is not an interaction plot. Plot versus single X produced.")
+    message("This is not an interaction plot. Plot versus single X produced.")
 
     plot1 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3) +
@@ -88,7 +88,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "E") +
       scale_fill_viridis_d(end = 0.9, option = "E") +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
   }
 
@@ -103,7 +103,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C") +
       scale_fill_viridis_d(end = 0.9, option = "C") +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     summaryinfo_LL <- summarySE(data = data, measurevar = response, groupvars = groupvars[[1]], na.rm = na.rm, conf.level = conf.level)
 
@@ -117,7 +117,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plotLR <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -128,7 +128,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = 1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     summaryinfo_UR <- summarySE(data = data, measurevar = response, groupvars = groupvars[[2]], na.rm = na.rm, conf.level = conf.level)
 
@@ -141,7 +141,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C") +
       scale_fill_viridis_d(end = 0.9, option = "C") +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
 
     plot1 <- ggarrange(plotUL, plotUR, plotLL, plotLR, nrow = 2, ncol = 2, align = "v")
@@ -162,7 +162,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       scale_color_viridis_d(end = 0.9, option = "E") +
       scale_fill_viridis_d(end = 0.9, option = "E") +
       labs(title = paste0("Two-way interaction of ", groupvars[[1]], " and ", groupvars[[2]])) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
 
   }
@@ -188,7 +188,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot22 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3) +
@@ -199,7 +199,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.9, option = "C", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
 
     plot33 <- data %>% ggplot() +
@@ -211,7 +211,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot12 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3, position = pd) +
@@ -222,7 +222,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.9, option = "C", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot13 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = 0.3, position = pd) +
@@ -233,7 +233,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot31 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -244,7 +244,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot21 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -255,7 +255,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot23 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = 0.3, position = pd) +
@@ -266,7 +266,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot32 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3, position = pd) +
@@ -277,7 +277,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.9, option = "C", direction = -1) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
     plot1 <- ggarrange(plot11, plot21, plot31, plot12,  plot22, plot32, plot13,  plot23 , plot33, nrow = 3, ncol = 3, align = "v")
     plot1 <- annotate_figure(plot1,
@@ -298,7 +298,7 @@ intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FA
       scale_fill_viridis_d(end = 0.9, option = "C") +
       facet_wrap(~.data[[groupvars[3]]]) +
       labs(title = paste0("Three-way interaction of ", groupvars[[1]], ", ", groupvars[[2]], ", and ", groupvars[[3]])) +
-      ylim(ylim_manual[1], ylim_manual[2])
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
 
 
   }

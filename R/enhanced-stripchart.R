@@ -58,16 +58,16 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
   dataR <- na.omit(data[,c(colforfac, colforresp)])
 
   if(dim(dataR)[1] < dim1){
-    print(paste(dim1 - dim(dataR)[1], "missing observations present on variables used, removed from all plots"))
+    warning(paste(dim1 - dim(dataR)[1], "missing observations present on variables used, removed from all plots"))
   }
 
   if(min(table(dataR[,as.character(groupvars)]))<20 & min(table(dataR[,as.character(groupvars)]))>=3){
-    print(paste0("Warning, one or more of the levels of a factor variable has a small sample size, shapes of violins for small group sizes can be misleading. The least frequently observed level has only ", min(table(data[,colforfac])), " observations." ))
+    warning(paste0("Warning, one or more of the levels of a factor variable has a small sample size, shapes of violins for small group sizes can be misleading. The least frequently observed level has only ", min(table(data[,colforfac])), " observations." ))
   }
 
 
   if(min(table(dataR[,as.character(groupvars)]))<3){
-    print(paste0("Warning, one or more of the levels of a factor variable has an extremely small sample size. The least frequently observed level has only ", min(table(data[,colforfac])), " observations. Try filtering out the least observed group and re-making the plot without that level." ))
+    warning(paste0("Warning, one or more of the levels of a factor variable has an extremely small sample size. The least frequently observed level has only ", min(table(data[,colforfac])), " observations. Try filtering out the least observed group and re-making the plot without that level." ))
   }
 
   summaryinfo <- summarySE(data = dataR, measurevar = measurevar, groupvars = groupvars, na.rm = na.rm, conf.level = conf.level)
