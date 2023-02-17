@@ -41,6 +41,7 @@
 #'
 #' cites_strat <- cites_larger %>%
 #'   slice_sample(prop = 0.5) %>% #Sample 50% of articles in each selected journal
+#'   ungroup() %>% #Remove group_by information from data set
 #'   dplyr::select(-totalcountsbyjournal) #Remove temporary variable
 #'
 #'cites_strat <- cites_strat %>% mutate(
@@ -78,4 +79,8 @@
 #'    main = "Pirate plot of log-publications", inf.method = "ci",
 #'    inf.disp = "line",
 #'    pal = "southpark")
+#' cites_strat <- cites_strat %>% mutate(logpub = log1p(citations))
+#'   enhanced_stripchart(logpub ~ onacad, data = cites_strat)
+#' cites_strat %>% mutate(logpub = log1p(citations)) %>%
+#'   intplot_gg(response = "logpub", groupvars = c("onacad", "online"), array = T)
 "cites"

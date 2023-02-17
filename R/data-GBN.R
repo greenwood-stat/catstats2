@@ -22,10 +22,10 @@
 #'  # Data wrangling
 #'  GBN <- GBN %>% mutate(Species = factor(Species),
 #'       Treatment = factor(Treatment),
-#'       Block = factor(Block)
+#'       Block = factor(Block),
+#'       logNfixpermass = log(Nfixpermass)
 #'       )
-#'  pirateplot(Nfixpermass ~ Species * Treatment, data = GBN,
-#'             inf.method = "ci",
-#'             inf.disp = "line",
-#'             pal = "southpark")
+#'  GBN %>% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
+#'  #Not run
+#'  #GBN %>% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
 "GBN"

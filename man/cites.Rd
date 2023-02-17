@@ -46,6 +46,7 @@ cites_larger <- cites \%>\%
 
 cites_strat <- cites_larger \%>\%
   slice_sample(prop = 0.5) \%>\% #Sample 50\% of articles in each selected journal
+  ungroup() \%>\% #Remove group_by information from data set
   dplyr::select(-totalcountsbyjournal) #Remove temporary variable
 
 cites_strat <- cites_strat \%>\% mutate(
@@ -83,6 +84,10 @@ pirateplot(log1p(citations) ~ onacad+online, data = cites_strat,
    main = "Pirate plot of log-publications", inf.method = "ci",
    inf.disp = "line",
    pal = "southpark")
+cites_strat <- cites_strat \%>\% mutate(logpub = log1p(citations))
+  enhanced_stripchart(logpub ~ onacad, data = cites_strat)
+cites_strat \%>\% mutate(logpub = log1p(citations)) \%>\%
+  intplot_gg(response = "logpub", groupvars = c("onacad", "online"), array = T)
 }
 \references{
 Niyazov, Y., Vogel, C., Price, R., Lund, B., Judd, B., Akil, A., Mortonson, M., Schwartzman, J., and Shron, M. (2016). Open Access Meets Discoverability: Citations to Articles Posted to Academia.edu. \emph{PLoS ONE} 11(2): e0148257. doi:10.1371/journal.pone.0148257

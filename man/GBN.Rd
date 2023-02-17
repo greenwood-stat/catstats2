@@ -27,12 +27,12 @@ These data are on feathermoss from an experiment
  # Data wrangling
  GBN <- GBN \%>\% mutate(Species = factor(Species),
       Treatment = factor(Treatment),
-      Block = factor(Block)
+      Block = factor(Block),
+      logNfixpermass = log(Nfixpermass)
       )
- pirateplot(Nfixpermass ~ Species * Treatment, data = GBN,
-            inf.method = "ci",
-            inf.disp = "line",
-            pal = "southpark")
+ GBN \%>\% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
+ #Not run
+ #GBN \%>\% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
 }
 \references{
 Gundale, M., Bach, L., and Nordin, A. (2013) The impact of simulated chronic nitrogen deposition on the biomass and N_2-fixation activity of two boreal feather moss-cyanobacteria associations. Biology Letters 9:20130797 (http://dx.doi.org/10.1098/rsbl.2013.0797).
