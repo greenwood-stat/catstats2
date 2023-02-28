@@ -55,4 +55,8 @@
 #'            data = snowdepths, family = binomial)
 #'summary(glm2)
 #'plot(allEffects(glm2), type = "response", grid = T)
+#'
+#'snowdepthsR <- snowdepths %>% dplyr::filter(SnowPresence == "Some")
+#'densitymodel <- lm(density ~ Landf + rad + ElMean + ElevCent + AspectCat, data = snowdepthsR)
+#'plot(allEffects(densitymodel, residuals = T), grid = T)
 "snowdepths"

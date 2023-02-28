@@ -28,6 +28,7 @@
 #' @source http://www.wcc.nrcs.usda.gov/snotel/Montana/montana.html
 #' @keywords data snow temperature elevation
 #' @examples
+#' library(tidyverse)
 #' BozemanDailyTemps <- BozemanDailyTemps %>% mutate(
 #'   Year = year(DATE_correct),
 #'   Month = month(DATE_correct),
