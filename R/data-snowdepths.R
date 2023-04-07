@@ -4,6 +4,8 @@
 #' More details on the sampling design and analysis used are in the original paper.
 #' Data graciously provided by authors.
 #'
+#' Likely match to the data published in Appendix A of https://scholarworks.montana.edu/xmlui/handle/1/3470
+#'
 #' @format a \code{data.frame} with 1017 observations on 10 variables:
 #' \describe{
 #'   \item{swe}{Snow water equivalent in [?]}

@@ -28,6 +28,9 @@ These data were collected using a stratified sampling plan as discussed in Wetla
 More details on the sampling design and analysis used are in the original paper.
 Data graciously provided by authors.
 }
+\details{
+Likely match to the data published in Appendix A of https://scholarworks.montana.edu/xmlui/handle/1/3470
+}
 \examples{
 library(tidyverse)
 library(effects)
