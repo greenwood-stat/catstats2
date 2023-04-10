@@ -1,4 +1,5 @@
 #' Visualization of a correlation matrix using ggplot2
+#'
 #' Kassambara A (2022). ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'. R package version 0.1.4
 #' @import ggplot2
 #' @description \itemize{ \item ggcorrplot(): A graphical display of a

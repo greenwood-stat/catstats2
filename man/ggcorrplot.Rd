@@ -3,8 +3,7 @@
 \name{ggcorrplot}
 \alias{ggcorrplot}
 \alias{cor_pmat}
-\title{Visualization of a correlation matrix using ggplot2
-Kassambara A (2022). ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'. R package version 0.1.4}
+\title{Visualization of a correlation matrix using ggplot2}
 \usage{
 ggcorrplot(
   corr,
@@ -122,6 +121,9 @@ matrix p-values. }
 Modified version from ggcorrplot package 0.1.4:
 Kassambara A (2022). ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'. R package version 0.1.4
 }
+\details{
+Kassambara A (2022). ggcorrplot: Visualization of a Correlation Matrix using 'ggplot2'. R package version 0.1.4
+}
 \examples{
 # Compute a correlation matrix
 data(mtcars)
@@ -155,7 +157,7 @@ ggcorrplot(corr,
   hc.order = TRUE, type = "lower",
   outline.color = "white"
 )
-# Get the upeper triangle
+# Get the upper triangle
 ggcorrplot(corr,
   hc.order = TRUE, type = "upper",
   outline.color = "white"
