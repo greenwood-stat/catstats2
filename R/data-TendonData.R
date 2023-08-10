@@ -7,6 +7,13 @@
 #' Note that data are as posted but variable names are manipulated in help to provide
 #' variable names and coding that are more compatible with R.
 #'
+#' For VISA-A: "The maximum score that can be achieved on the question is 100,
+#' and would be the score of person who is completely asymptomatic.
+#' A lower score indicates more symptoms and greater limitation of physical activity.
+#'  A recreational person who has Achilles tendinopathy will not score higher than 70
+#'  on the VISA-A scale." - From https://www.physio-pedia.com/VISA-A_scale
+
+#'
 #' "Subject ID" = identifier includes site info (two observations per subject typically)
 #' "Side" = Leg levels of Left/Right
 #' "PSFR" = See paper, main response variable related to intra-tendinous morphology, units: mm^-1, average of 3 scans
@@ -14,7 +21,7 @@
 #' "KneeWall" = knee-to-wall composite dorsiflexion test (a weight-bearing lunge test of composite ankle dorsiflexion range of motion, as described by Hoch and Mckeon)
 #'  "CurrPain (Y=1)" = current pain (in either/measured ankle? - check)
 #'  "Neovascularization (Doppler) (Y=1)" = ?
-#'  "VISA-A" = Victorian Institute of Sport Assessment—Achilles score(?)
+#'  "VISA-A" = Victorian Institute of Sport Assessment—Achilles score
 #'  "Age" = Age in years
 #'  "Sex  (M=1)" (53 males, 38 females in study)
 #'  "YearsRunning" = Years running (years)
@@ -33,7 +40,7 @@
 #'   \item{KneeWall}{knee-to-wall composite dorsiflexion test, units?}
 #'   \item{CurrPain (Y=1)}{current pain}
 #'   \item{Neovascularization (Doppler) (Y=1)}{?}
-#'   \item{VISA-A}{Victorian Institute of Sport Assessment—Achilles score(?)}
+#'   \item{VISA-A}{Victorian Institute of Sport Assessment—Achilles, score out of 100}
 #'   \item{Age}{Age in years}
 #'   \item{Sex  (M=1)}{Male is 1, female is 0}
 #'   \item{YearsRunning}{Years running in years}
@@ -59,13 +66,25 @@
 #'          CurrPain = 'CurrPain (Y=1)',
 #'          WaisttoHip = 'Waist to Hip',
 #'          VISAA = 'VISA-A',
-#'          Neovascularization = 'Neovascularization (Doppler) (Y=1)'
+#'          Neovascularization = 'Neovascularization (Doppler) (Y=1)',
+#'          HistPain = 'Hx Pain (Y=1)'
 #'          ) %>%
 #'          mutate_if(is.character, as.factor) %>%
 #'          mutate(CurrPain = factor(CurrPain),
 #'          Neovascularization = factor(Neovascularization),
-#'          Sex = factor(Sex))
+#'          Sex = factor(Sex),
+#'          Location = factor(substr(SubjectID, 1, 3)),
+#'          HistPain = factor(HistPain),
+#'          PainCombs = factor(interaction(HistPain, CurrPain))
+#'          )
+#'  levels(TendonData$Sex) <- c("Female", "Male")
+#'  levels(TendonData$PainCombs) <- c("NoPain", "PreviousPain", "CurrentPain", "Both")
 #'
 #' enhanced_stripchart(PSFR ~ Side, data = TendonData)
+#' enhanced_stripchart(PSFR ~ PainCombs, data = TendonData %>% dplyr::filter(PainCombs != "CurrentPain"))
 #' enhanced_stripchart(HeelRaise ~ CurrPain, data = TendonData)
+#'
+#' lmPBW <- lm(VISAA ~ PainCombs + BMI + WaisttoHip, data = TendonData %>% drop_na() %>% dplyr::filter(PainCombs != "CurrentPain"))
+#' library(effects)
+#' plot(allEffects(lmPBW, residuals = T), grid = T)
 "TendonData"
