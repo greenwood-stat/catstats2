@@ -32,11 +32,11 @@ Imports:
     viridis,
     yarrr,
     patchwork,
-    easyalluvial,
     ggpubr
 Suggests:
     alr4,
     coneproj,
+    easyalluvial,
     faraway,
     heplots,
     MASS,
