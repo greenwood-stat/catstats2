@@ -30,9 +30,9 @@ These data are on feathermoss from an experiment
       Block = factor(Block),
       logNfixpermass = log(Nfixpermass)
       )
- GBN \%>\% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
+ GBN \%>\% ggintplot(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
  #Not run
- #GBN \%>\% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
+ #GBN \%>\% ggintplot(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
 }
 \references{
 Gundale, M., Bach, L., and Nordin, A. (2013) The impact of simulated chronic nitrogen deposition on the biomass and N_2-fixation activity of two boreal feather moss-cyanobacteria associations. Biology Letters 9:20130797 (http://dx.doi.org/10.1098/rsbl.2013.0797).

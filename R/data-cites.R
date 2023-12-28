@@ -82,5 +82,5 @@
 #' cites_strat <- cites_strat %>% mutate(logpub = log1p(citations))
 #'   enhanced_stripchart(logpub ~ onacad, data = cites_strat)
 #' cites_strat %>% mutate(logpub = log1p(citations)) %>%
-#'   intplot_gg(response = "logpub", groupvars = c("onacad", "online"), array = T)
+#'   ggintplot(response = "logpub", groupvars = c("onacad", "online"), array = T)
 "cites"

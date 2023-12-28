@@ -52,7 +52,7 @@ Spaghetti_facet <- didg_study \%>\% ggplot(mapping = aes(x = Baseline_Followup, 
 
 Spaghetti + Spaghetti_facet
 
-intplot_gg(response = "Epworth", groupvars = c("Baseline_Followup", "Group"), data = didg_study)
+ggintplot(response = "Epworth", groupvars = c("Baseline_Followup", "Group"), data = didg_study)
 }
 \references{
 Puhan M A, Suarez A, Cascio C L, Zahn A, Heitz M, Braendli O et al. Didgeridoo playing as alternative treatment for obstructive sleep apnoea syndrome: randomised controlled trial BMJ 2006; 332 :266 doi:10.1136/bmj.38705.470590.55

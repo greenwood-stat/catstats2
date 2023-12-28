@@ -45,5 +45,5 @@
 #'
 #' Spaghetti + Spaghetti_facet
 #'
-#' intplot_gg(response = "Epworth", groupvars = c("Baseline_Followup", "Group"), data = didg_study)
+#' ggintplot(response = "Epworth", groupvars = c("Baseline_Followup", "Group"), data = didg_study)
 "didg_study"

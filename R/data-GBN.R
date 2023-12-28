@@ -25,7 +25,7 @@
 #'       Block = factor(Block),
 #'       logNfixpermass = log(Nfixpermass)
 #'       )
-#'  GBN %>% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
+#'  GBN %>% ggintplot(response = "logNfixpermass", groupvars = c("Species", "Treatment"))
 #'  #Not run
-#'  #GBN %>% intplot_gg(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
+#'  #GBN %>% ggintplot(response = "logNfixpermass", groupvars = c("Species", "Treatment", "Block"), array = T)
 "GBN"
