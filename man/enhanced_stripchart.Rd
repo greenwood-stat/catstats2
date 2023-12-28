@@ -10,7 +10,9 @@ enhanced_stripchart(
   na.rm = TRUE,
   conf.level = 0.95,
   .drop = TRUE,
-  ptalpha = 0.3
+  ptalpha = 0.3,
+  jitterwidth = 0.1,
+  jitterheight = 0
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ enhanced_stripchart(
 \item{.drop}{option for plyr, mostly not used}
 
 \item{ptalpha}{alpha value for the points, set to 0 to hide points and just view means, CIs, and violins}
+
+\item{jitterwidth}{control jitter amount in horizontal, defaults to 0.1}
+
+\item{jitterheight}{control jitter amount in vertical, defaults to 0}
 
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }
@@ -39,5 +45,6 @@ Function for making enhanced stripcharts with means and confidence intervals for
 data(TitanicSurvival, package = "carData")
 TitanicSurvival \%>\% enhanced_stripchart(age ~ passengerClass)
 data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
-enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05)
+enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
+  jitterwidth = 0.1, jitterheight = 0)
 }

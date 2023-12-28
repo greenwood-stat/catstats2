@@ -11,6 +11,8 @@
 #' @param conf.level: the proportion confidence level of the confidence interval (default is 0.95)
 #' @param .drop option for plyr, mostly not used
 #' @param ptalpha alpha value for the points, set to 0 to hide points and just view means, CIs, and violins
+#' @param jitterwidth control jitter amount in horizontal, defaults to 0.1
+#' @param jitterheight control jitter amount in vertical, defaults to 0
 #'
 #' @details Function for making enhanced stripcharts with means and confidence intervals for each combination of groups.
 #' @examples
@@ -18,11 +20,13 @@
 #' data(TitanicSurvival, package = "carData")
 #' TitanicSurvival %>% enhanced_stripchart(age ~ passengerClass)
 #' data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
-#' enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05)
+#' enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
+#'   jitterwidth = 0.1, jitterheight = 0)
 
 #' @export
 enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
-                                 conf.level=.95, .drop=TRUE, ptalpha = 0.3)
+                                 conf.level=.95, .drop=TRUE, ptalpha = 0.3,
+                                 jitterwidth = 0.1, jitterheight = 0)
 {
   #Function to generate pirateplot-ish plot using ggplot
 
@@ -75,13 +79,13 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
 
   plot1 <- dataR %>% ggplot() +
     geom_violin(aes(x = .data[[groupvars]], y = .data[[measurevar]], color = .data[[groupvars]]), alpha = 0.3) +
-    geom_jitter(aes(x = .data[[groupvars]], y = .data[[measurevar]], color = .data[[groupvars]]), alpha = ptalpha) +
+    geom_jitter(aes(x = .data[[groupvars]], y = .data[[measurevar]], color = .data[[groupvars]]), alpha = ptalpha, width = jitterwidth, height = jitterheight) +
     geom_errorbar(data = summaryinfo, aes(ymin = LL, ymax = UL, x = .data[[groupvars]]), alpha = 1, width=.2, col = "black") +
     #geom_line(data = summaryinfo, aes(x = .data[[groupvars]], y = mean)) +
     geom_point(data = summaryinfo, aes(x = .data[[groupvars]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
     theme_bw() +
-    scale_color_viridis_d(end = 0.9, option = "E") +
-    scale_fill_viridis_d(end = 0.9, option = "E") +
+    scale_color_viridis_d(end = 0.8, option = "E") +
+    scale_fill_viridis_d(end = 0.8, option = "E") +
     labs(title = paste0("Enhanced stripchart of ", measurevar, " by ", groupvars))
 
   return(plot1)

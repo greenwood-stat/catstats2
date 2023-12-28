@@ -15,16 +15,16 @@
 #' @examples
 #' # must have the carData package installed
 #' data(TitanicSurvival, package = "carData")
-#' intplot_gg(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T)
-#' intplot_gg(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
-#' intplot_gg(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
-#' intplot_gg(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T, ptalpha = .5, pd = .5)
-#' intplot_gg(data = TitanicSurvival, response = "age", groupvars = "sex", na.rm = T, conf.level = 0.95)
+#' ggintplot(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T)
+#' ggintplot(response = "age", groupvars = c("sex", "survived"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
+#' ggintplot(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = F)
+#' ggintplot(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T, ptalpha = .5, pd = .5)
+#' ggintplot(data = TitanicSurvival, response = "age", groupvars = "sex", na.rm = T, conf.level = 0.95)
 #' data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
-#' ToothGrowth %>% intplot_gg(response = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
+#' ToothGrowth %>% ggintplot(response = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
 
 #' @export
-intplot_gg <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FALSE,
+ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FALSE,
                         conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3, ylim_manual = NULL)
 {
   #Function to generate a plot array that have pirateplot-ish plots in off diagonals with single explanatory variables

@@ -28,8 +28,8 @@
 #' @param outline.color the outline color of square or circle. Default value is
 #'   "gray".
 #' @param hc.order logical value. If TRUE, correlation matrix will be hc.ordered
-#'   using hclust function.
-#' @param hc.method the agglomeration method to be used in hclust (see ?hclust).
+#'   using hclust function, set to TRUE
+#' @param hc.method the agglomeration method to be used in hclust (see ?hclust), default is complete.
 #' @param abs.dist If TRUE, use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))
 #' @param lab logical value. If TRUE, add correlation coefficient on the plot.
 #' @param lab_col,lab_size size and color to be used for the correlation
@@ -150,7 +150,7 @@ ggcorrplot <- function(corr,
                        show.diag = NULL,
                        colors = c("blue", "white", "red"),
                        outline.color = "gray",
-                       hc.order = FALSE,
+                       hc.order = TRUE,
                        hc.method = "complete",
                        abs.dist = TRUE,
                        lab = FALSE,

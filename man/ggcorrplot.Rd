@@ -16,7 +16,7 @@ ggcorrplot(
   show.diag = NULL,
   colors = c("blue", "white", "red"),
   outline.color = "gray",
-  hc.order = FALSE,
+  hc.order = TRUE,
   hc.method = "complete",
   abs.dist = TRUE,
   lab = FALSE,
@@ -68,9 +68,9 @@ show diagonal correlation for \code{type = "full"} and to remove it when
 "gray".}
 
 \item{hc.order}{logical value. If TRUE, correlation matrix will be hc.ordered
-using hclust function.}
+using hclust function, set to TRUE}
 
-\item{hc.method}{the agglomeration method to be used in hclust (see ?hclust).}
+\item{hc.method}{the agglomeration method to be used in hclust (see ?hclust), default is complete.}
 
 \item{abs.dist}{If TRUE, use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))}
 
