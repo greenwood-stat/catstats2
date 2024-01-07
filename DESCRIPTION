@@ -27,6 +27,7 @@ Imports:
     openintro,
     psych,
     RColorBrewer,
+    reshape2,
     rmarkdown,
     tidyverse,
     viridis,

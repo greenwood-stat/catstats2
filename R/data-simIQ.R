@@ -1,0 +1,128 @@
+#' Simulated multi-level IQ and alcohol usage data
+#'
+#' These are simulated data for teaching purposes to illustrate Simpson's
+#' paradox and the benefits of aggregating/decomposing variation in predictor variable.
+#'
+#' The motivation for these simulated data is that various researchers have
+#' studied the relationship between IQ and alcohol consumption and have often
+#' found conflicting results - often with studies finding different directions
+#' of relationships between alcohol consumption and IQ. We will work with a
+#' fake data set inspired by some of these studies. It contains information
+#' on 25 subjects with repeated IQ measurements (units are points) and
+#' measurements of the amount of beer (in liters) that the subjects have
+#' consumed over the 2 weeks prior to taking the test. Suppose that each
+#' subject that agreed to participate in the study takes the test at
+#' randomly selected times over the course of five years and when they arrive
+#' to take the test, they record the amount of beer they have consumed in the
+#' prior two weeks. The test results provided are not ordered based on
+#' when they took the tests - that information is not available in this scenario.
+#'
+#' Based on: http://www.personality-project.org/r/tutorials/summerschool.14/MLM_Schoenbrodt.pdf
+#' Code manipulated from: https://hlplab.wordpress.com/2011/05/31/mixed-models-and-simpsons-paradox/
+#' Subject = Label from 1 to 25 for the subjects
+#' Beer_Liters = Simulated Beer consumption in Liters over prior two weeks
+#' IQ = Simulated IQ score
+#'
+#'
+#' @format a \code{data.frame} with 300 observations on 3 variables:
+#' \describe{
+#'   \item{Subject}{Label from 1 to 25 for subjects}
+#'   \item{Beer_Liters}{Beer consumption in liters}
+#'   \item{IQ}{IQ score in points}
+#' }
+#'
+#' @name simIQ
+#' @docType data
+#' @references Simulated data
+#' @source Code below:
+#'
+#'```r
+#' init = function(ngroup = 10, nitem = 10) {
+#'
+#' x = 0:6
+#'
+#' spread_x = (max(x) - min(x)) * .2
+#'
+#' group_x_start = runif(ngroup, min(x), max(x))
+#'
+#' group_x_end = runif(ngroup,
+#'                     apply(cbind(group_x_start + spread_x/2, max(x)), MARGIN = 1, FUN =  min),
+#'                                       apply(cbind(group_x_start + spread_x, max(x)), MARGIN = 1, FUN =  min))
+#'
+#'  # variances
+#'
+#'  group_sigma = 7
+#'
+#'  group_x_sigma = .1
+#'
+#'  indiv_sigma = 2
+#'
+#'  # betas
+#'
+#'  alpha = 100
+#'
+#'  group_alpha = rnorm(ngroup, 0, group_sigma)
+#'
+#'  beta_x =3
+#'
+#'  # for normal differences
+#'
+#'  # beta_group_x = rnorm(ngroup, 0, group_x_sigma)
+#'
+#'  beta_group_x = 2 * rbinom(ngroup, 1, 0.9) * -0.8*beta_x + rnorm(ngroup, 0, group_x_sigma)
+#'
+#'  ## -----------------
+#'  # create data set
+#'  ## -----------------
+#'
+#'  d = data.frame(Group = rep(1:ngroup, nitem),
+#'                 Item = sort(rep(1:nitem, ngroup)))
+#'                 d$group_x_start = group_x_start[d$Group]
+#'                 d$group_x_end = group_x_end[d$Group]
+#'                 d$x = runif(ngroup * nitem, d$group_x_start, d$group_x_end)
+#'
+#'  # y under assumption linear mixed model
+#'
+#'  d$y = (alpha + group_alpha[d$Group]) +
+#'   (beta_x + beta_group_x[d$Group]) * d$x  +
+#'   rnorm(ngroup * nitem, 0, indiv_sigma)
+#'
+#'  # y under simpson's paradox
+#'
+#'  d$y_simpson = (alpha + group_alpha[d$Group]) +
+#'    (beta_x) * d$x  +
+#'    (beta_group_x[d$Group]) * (d$x - d$group_x_start) +
+#'    rnorm(ngroup * nitem, 0, indiv_sigma)
+#'
+#'    # convey group and item to factor (only AFTER all the above has happened)
+#'
+#'    d$Group = factor(d$Group)
+#'
+#'    d$Item = factor(d$Item)
+#'
+#'    return(d)
+#'
+#'    }
+#'
+#'  set.seed(392123)
+#'  simIQ <- init(25, 12)
+#'```
+#'
+#' @keywords data multilevel mixed model simpsons paradox hierarchical simulated
+#' @examples
+#' library(tidyverse)
+#' library(catstats2)
+#' library(lmerTest)
+#' library(effects)
+#'
+#' lm1 <- lm(IQ ~ Beer_Liters, data = simIQ)
+#' plot(allEffects(lm1, residuals = T), grid = T)
+#'
+#' simIQ <- simIQ %>% mutate(MeanBeer = ave(x=Beer_Liters, Subject),
+#'                           BeerCent = Beer_Liters - MeanBeer)
+#' lmer2 <- lmer(IQ ~ BeerCent + MeanBeer + (1|Subject), data = simIQ)
+#' summary(lmer2)
+#' confint(lmer2)
+#'
+#' #plot(allEffects(lmer2, residuals = T), grid = T)
+"simIQ"

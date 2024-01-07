@@ -1,0 +1,50 @@
+#' Data on contamination of fingers from chlamydia in urine surrogates
+#'
+#' Data from a lab experiment where three experimenters for three strains
+#' of chlamydia, and two methods of potential contamination with DCq responses.
+#'
+#' Experimenter = Label from 1 to 3 for the experimenters
+#' Strain = Label from to 1 to 3 for Strain
+#' Method = A or B for two methods of contamination
+#' DCq = relative amount of contamination, see paper for more information
+#'
+#'
+#' @format a \code{data.frame} with 66 observations on 4 variables:
+#' \describe{
+#'   \item{Experimenter}{Label from 1 to 3 for the experimenters}
+#'   \item{Strain}{Label from to 1 to 3 for Strain}
+#'   \item{Method}{A or B for two methods of contamination}
+#'   \item{DCq}{A or B for two methods of contamination}
+#'   \item{TimetoPeakEnergy}{relative amount of contamination}
+#' }
+#'
+#' @name fingers
+#' @docType data
+#' @references Giffard PM, Lilliebridge RA, Wilson J, Murray G, Phillips S, Tabrizi SN, Garland SM, Martin L, Singh G, Tong SYC, Holt DC, Andersson P. Contaminated fingers: a potential cause of Chlamydia trachomatis-positive urine specimens. Sex Transm Infect. 2018 Feb;94(1):32-36. doi: 10.1136/sextrans-2016-053081. Epub 2017 Jun 9. PMID: 28600332; PMCID: PMC5800334.
+#' @source Data extracted from PDF supplemental material in https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5800334/bin/sextrans-2016-053081supp001.pdf
+#' @keywords data ANOVA interaction
+#' @examples
+#' library(tidyverse)
+#' library(catstats2)
+#' library(mosaic)
+#' library(car)
+#' fingers <- fingers %>% mutate(Method = factor(Method),
+#'                               ExperimenterF = factor(Experimenter),
+#'                               StrainF = factor(Strain))
+#'
+#' tally(Strain ~ Method, data = fingers)
+#'
+#' ggintplot(response = "DCq", groupvars = c("Strain", "Method"), data = fingers)
+#' m_int <- lm(DCq ~ Method * StrainF, data = fingers)
+#' Anova(m_int)
+#'
+#' ggintplot(response = "DCq", groupvars = c("Strain", "Method", "Experimenter"),
+#' array = F, data = fingers)
+#' m_int3 <- lm(DCq ~ Method * StrainF *ExperimenterF, data = fingers)
+#' Anova(m_int3)
+#'
+#' ggintplot(response = "DCq", groupvars = c("Strain", "Method", "Experimenter"),
+#' array = T, data = fingers)
+#' m_intall2 <- lm(DCq ~ (Method + StrainF + ExperimenterF)^2, data = fingers)
+#' Anova(m_intall2)
+"fingers"

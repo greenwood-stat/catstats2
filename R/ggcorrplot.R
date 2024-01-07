@@ -26,23 +26,23 @@
 #'   \code{type} is one of "upper" or "lower".
 #' @param colors a vector of 3 colors for low, mid and high correlation values.
 #' @param outline.color the outline color of square or circle. Default value is
-#'   "gray".
+#'   "beige".
 #' @param hc.order logical value. If TRUE, correlation matrix will be hc.ordered
 #'   using hclust function, set to TRUE
-#' @param hc.method the agglomeration method to be used in hclust (see ?hclust), default is complete.
-#' @param abs.dist If TRUE, use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))
+#' @param hc.method the agglomeration method to be used in hclust (see ?hclust), default is ward.D2.
+#' @param abs.dist If TRUE (default), use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))
 #' @param lab logical value. If TRUE, add correlation coefficient on the plot.
 #' @param lab_col,lab_size size and color to be used for the correlation
 #'   coefficient labels. used when lab = TRUE.
 #' @param p.mat matrix of p-value. If NULL, arguments sig.level, insig, pch,
 #'   pch.col, pch.cex is invalid.
-#' @param sig.level significant level, if the p-value in p-mat is bigger than
+#' @param sig.level significance level, if the p-value in p-mat is bigger than
 #'   sig.level, then the corresponding correlation coefficient is regarded as
 #'   insignificant.
-#' @param insig character, specialized insignificant correlation coefficients,
+#' @param insig character, specialized non-significant correlation coefficients,
 #'   "pch" (default), "blank". If "blank", wipe away the corresponding glyphs;
 #'   if "pch", add characters (see pch for details) on corresponding glyphs.
-#' @param pch add character on the glyphs of insignificant correlation
+#' @param pch add character on the glyphs of non-significant correlation
 #'   coefficients (only valid when insig is "pch"). Default value is 4.
 #' @param pch.col,pch.cex the color and the cex (size) of pch (only valid when
 #'   insig is "pch").
@@ -61,6 +61,7 @@
 #' corr <- round(cor(mtcars), 1)
 #' corr
 #'
+#' library(reshape2)
 #' # Compute a matrix of correlation p-values
 #' p.mat <- cor_pmat(mtcars)
 #' p.mat
@@ -116,12 +117,12 @@
 #' # Add correlation significance level
 #' # --------------------------------
 #' # Argument p.mat
-#' # Barring the no significant coefficient
+#' # Barring the non-significant coefficient
 #' ggcorrplot(corr,
 #'   hc.order = TRUE,
 #'   type = "lower", p.mat = p.mat
 #' )
-#' # Leave blank on no significant coefficient
+#' # Leave blank on non-significant coefficient
 #' ggcorrplot(corr,
 #'   p.mat = p.mat, hc.order = TRUE,
 #'   type = "lower", insig = "blank"
@@ -148,10 +149,10 @@ ggcorrplot <- function(corr,
                        show.legend = TRUE,
                        legend.title = "Corr",
                        show.diag = NULL,
-                       colors = c("blue", "white", "red"),
-                       outline.color = "gray",
+                       colors = c("#920000", "white", "#002fa7"),
+                       outline.color = "beige",
                        hc.order = TRUE,
-                       hc.method = "complete",
+                       hc.method = "ward.D2",
                        abs.dist = TRUE,
                        lab = FALSE,
                        lab_col = "black",

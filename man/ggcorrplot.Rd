@@ -14,10 +14,10 @@ ggcorrplot(
   show.legend = TRUE,
   legend.title = "Corr",
   show.diag = NULL,
-  colors = c("blue", "white", "red"),
-  outline.color = "gray",
+  colors = c("#920000", "white", "#002fa7"),
+  outline.color = "beige",
   hc.order = TRUE,
-  hc.method = "complete",
+  hc.method = "ward.D2",
   abs.dist = TRUE,
   lab = FALSE,
   lab_col = "black",
@@ -65,14 +65,14 @@ show diagonal correlation for \code{type = "full"} and to remove it when
 \item{colors}{a vector of 3 colors for low, mid and high correlation values.}
 
 \item{outline.color}{the outline color of square or circle. Default value is
-"gray".}
+"beige".}
 
 \item{hc.order}{logical value. If TRUE, correlation matrix will be hc.ordered
 using hclust function, set to TRUE}
 
-\item{hc.method}{the agglomeration method to be used in hclust (see ?hclust), default is complete.}
+\item{hc.method}{the agglomeration method to be used in hclust (see ?hclust), default is ward.D2.}
 
-\item{abs.dist}{If TRUE, use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))}
+\item{abs.dist}{If TRUE (default), use sqrt(2(1-abs(cormat))) as dist, false uses sqrt(2(1-cormat))}
 
 \item{lab}{logical value. If TRUE, add correlation coefficient on the plot.}
 
@@ -82,15 +82,15 @@ coefficient labels. used when lab = TRUE.}
 \item{p.mat}{matrix of p-value. If NULL, arguments sig.level, insig, pch,
 pch.col, pch.cex is invalid.}
 
-\item{sig.level}{significant level, if the p-value in p-mat is bigger than
+\item{sig.level}{significance level, if the p-value in p-mat is bigger than
 sig.level, then the corresponding correlation coefficient is regarded as
 insignificant.}
 
-\item{insig}{character, specialized insignificant correlation coefficients,
+\item{insig}{character, specialized non-significant correlation coefficients,
 "pch" (default), "blank". If "blank", wipe away the corresponding glyphs;
 if "pch", add characters (see pch for details) on corresponding glyphs.}
 
-\item{pch}{add character on the glyphs of insignificant correlation
+\item{pch}{add character on the glyphs of non-significant correlation
 coefficients (only valid when insig is "pch"). Default value is 4.}
 
 \item{pch.col, pch.cex}{the color and the cex (size) of pch (only valid when
@@ -130,6 +130,7 @@ data(mtcars)
 corr <- round(cor(mtcars), 1)
 corr
 
+library(reshape2)
 # Compute a matrix of correlation p-values
 p.mat <- cor_pmat(mtcars)
 p.mat
@@ -185,12 +186,12 @@ ggcorrplot(corr,
 # Add correlation significance level
 # --------------------------------
 # Argument p.mat
-# Barring the no significant coefficient
+# Barring the non-significant coefficient
 ggcorrplot(corr,
   hc.order = TRUE,
   type = "lower", p.mat = p.mat
 )
-# Leave blank on no significant coefficient
+# Leave blank on non-significant coefficient
 ggcorrplot(corr,
   p.mat = p.mat, hc.order = TRUE,
   type = "lower", insig = "blank"

@@ -94,7 +94,8 @@
 #' #ggplotly(p1) #not run
 #' #ggplotly(p2) #not run
 #'
-#' m_max <- lm(YearlyMeanMaxTemp ~ Year, data = BozemanYearlyAggR)
+#' m_max <- lm(YearlyMeanMaxTemp ~ Year,
+#' data = BozemanYearlyAggR %>% drop_na(YearlyMeanMaxTemp))
 #' par(mfrow = c(2,2))
 #' plot(m_max, pch = 16)
 #' plot(m_max, which = 4)

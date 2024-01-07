@@ -3,6 +3,8 @@
 export(cor_pmat)
 export(enhanced_stripchart)
 export(ggcorrplot)
+export(ggdredgeplot)
+export(ggdredgeplotly)
 export(ggintplot)
 export(intplot)
 export(intplotarray)

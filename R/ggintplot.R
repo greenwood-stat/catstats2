@@ -10,6 +10,8 @@
 #' @param pd position dodge to shift groups (default is 0.1)
 #' @param ptalpha alpha value for the points, set to 0 to hide points and just view means, CIs, and violins
 #' @param ylim_manual vector of lower and upper y-axis limits for all plots
+#' @param array For three predictors, switches between 3-way interaction (array = F),
+#' and main effects and all 2-way interactions (array = T)
 #'
 #' @details Function for making nice looking interaction plot (both versions) with observations and 95% confidence intervals for each combination of groups.
 #' @examples

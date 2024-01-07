@@ -26,6 +26,9 @@ ggintplot(
 
 \item{pd}{position dodge to shift groups (default is 0.1)}
 
+\item{array}{For three predictors, switches between 3-way interaction (array = F),
+and main effects and all 2-way interactions (array = T)}
+
 \item{ptalpha}{alpha value for the points, set to 0 to hide points and just view means, CIs, and violins}
 
 \item{ylim_manual}{vector of lower and upper y-axis limits for all plots}
