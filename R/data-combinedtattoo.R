@@ -1,0 +1,54 @@
+#' Data from a repeated measures study on tattoo sweat rates
+#'
+#' Results of a study of 10 subjects on sweat rates and sodium
+#' concentrations, paired between two locations on each subject
+#' I digitized the plotted data to create the provided data set, results do not
+#' exactly match the original results.
+#'
+#' Subject demographics are
+#' assumed to be correctly matched but were merged
+#' based on the information in a plot and in a separate table
+#'
+#'
+#' @format a \code{data.frame} with 20 observations on 10 variables from 10 subjects:
+#' \describe{
+#'   \item{Subject}{Subject ID from 1 to 10 0}
+#'   \item{SweatRate}{Rate of sweat from a location, mg per cm-squared per min}
+#'   \item{Tat_not}{Tattoo location or Not}
+#'   \item{Na_conc}{Na concentration, mMol/L}
+#'   \item{Height_cm}{Height of subject in cm}
+#'   \item{Weight_kg}{Weight of subject in kg}
+#'   \item{Age_yr}{Age of subject in years}
+#'   \item{Side}{Side of subject, left or right}
+#'   \item{Location}{Location of tattoo, categorical}
+#'   \item{Tattoo_Age}{Age of tattoo (replicated both subject observations), years}
+#' }
+#'
+#' @name combinedtattoo
+#' @docType data
+#' @references Luetkemeier, M., Hanisko, J., and K. Aho (2017) Skin Tattoos Alter Sweat Rate and Na+ Concentration. Medicine & Science in Sports & Exercise 49(7):p 1432-1436. DOI: 10.1249/MSS.0000000000001244
+#' @source Digitized version of published Figures 1 and 2 combined with Tabel 1 (does not exactly match published numerical summaries!)
+#' @keywords data tattoo repeated measures mixed models
+#' @examples
+#' library(ggthemes)
+#' library(tidyverse)
+#' combinedtattoo <- combinedtattto %>% mutate(SubjectF = factor(Subject))
+#' p1 <- combinedtattoo %>% ggplot(aes(x = Tat_not, y = SweatRate, group = SubjectF)) +
+#'   geom_line(aes(color = SubjectF)) +
+#'   scale_color_viridis_d(end = 0.8)
+#' p2 <- combinedtattoo %>% ggplot(aes(x = Tat_not, y = Na_conc, group = SubjectF)) +
+#'   geom_line(aes(color = SubjectF)) +
+#'   scale_color_viridis_d(end = 0.8)
+#' p <- combinedtattoo %>% ggplot(aes(x = Weight_kg, y = SweatRate)) +
+#'   geom_point(aes(color = Subject)) +
+#'   scale_color_viridis_c(end = 0.8) +
+#'   geom_smooth(method = "lm") +
+#'   facet_wrap(~Tat_not)
+#' library(patchwork)
+#' (p1 + p2) / (p3)
+#' library(lmerTest)
+#' lmer1 <- lmer(SweatRate ~ Tat_not + (1|Subject), data = combinedtattoo)
+#' summary(lmer1)
+#' lmerFL <- lmer(SweatRate ~ Tat_not*Weight_kg + (1|Subject), data = combinedtattoo)
+#' summary(lmerFL)
+"combinedtattoo"
