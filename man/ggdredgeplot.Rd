@@ -8,7 +8,8 @@ ggdredgeplot(
   data,
   deltasubset = NA,
   colors = cet_pal(6, "l3"),
-  name = "Delta IC"
+  name = "Delta IC",
+  max.overlaps = 200
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ ggdredgeplot(
 \item{colors}{default cet_pal(6, "l3"), colors for four binned delta IC values}
 
 \item{name}{label for the x-axis number line in the plot}
+
+\item{max.overlaps}{Number of overlapping labels for models, defaults to 200}
 }
 \description{
 This function provides a ggplot2 of dredge model information-criteria results,

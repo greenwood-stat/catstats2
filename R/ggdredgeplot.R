@@ -9,6 +9,7 @@
 #' @param deltasubset default is NA to show all results, cuts results to numeric delta IC value
 #' @param colors default cet_pal(6, "l3"), colors for four binned delta IC values
 #' @param name label for the x-axis number line in the plot
+#' @param max.overlaps Number of overlapping labels for models, defaults to 200
 #'
 #' @details Function for visual display of IC dredge model selection results.
 #' @examples
@@ -30,7 +31,8 @@
 ggdredgeplot <- function(data,
                          deltasubset = NA,
                          colors = cet_pal(6, "l3"),
-                         name = "Delta IC"){
+                         name = "Delta IC",
+                         max.overlaps = 200){
 
   if (is.null(attributes(data)$call)) {
     eval("Please provide results directly from dredge for plotting dredge model selection results.")
@@ -52,7 +54,8 @@ ggdredgeplot <- function(data,
       ggplot(aes(x = delta, y = 0, label = ModelNumber)) +
       geom_point(aes(color = DeltaBin), shape = 3, alpha = 0.8) +
       geom_label_repel(aes(color = DeltaBin), alpha = 0.6,
-                       direction = "y", max.overlaps = 200,
+                       direction = "y",
+                       max.overlaps = max.overlaps,
                        show.legend = FALSE) +
       theme(axis.ticks.y = element_blank(),
             axis.text.y = element_blank()) +
