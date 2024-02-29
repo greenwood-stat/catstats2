@@ -6,7 +6,7 @@
 \usage{
 ggdredgeplotly(
   data,
-  deltasubset = NA,
+  deltasubset = max(data$delta) + 1,
   colors = cet_pal(6, "l3"),
   name = "Delta IC"
 )
@@ -14,7 +14,7 @@ ggdredgeplotly(
 \arguments{
 \item{data}{Dredge model selection table output}
 
-\item{deltasubset}{default is NA to show all results, cuts results to numeric delta IC value}
+\item{deltasubset}{default is max delta + 1 to show all results, cuts results to numeric delta IC value}
 
 \item{colors}{default cet_pal(6, "l3"), colors for four binned delta IC values}
 

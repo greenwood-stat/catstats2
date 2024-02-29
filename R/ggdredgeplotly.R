@@ -6,7 +6,7 @@
 #'
 #'
 #' @param data Dredge model selection table output
-#' @param deltasubset default is NA to show all results, cuts results to numeric delta IC value
+#' @param deltasubset default is max delta + 1 to show all results, cuts results to numeric delta IC value
 #' @param colors default cet_pal(6, "l3"), colors for four binned delta IC values
 #' @param name label for the x-axis number line in the plot
 #'
@@ -26,7 +26,7 @@
 #'
 #' @export
 ggdredgeplotly = function(data,
-                          deltasubset = NA,
+                          deltasubset = max(data$delta) + 1,
                           colors = cet_pal(6, "l3"),
                           name = "Delta IC"){
 
@@ -35,9 +35,7 @@ ggdredgeplotly = function(data,
   } else{
 
     toplot <- data
-    if (!is.na(deltasubset)){
-      toplot <- subset(toplot, delta < deltasubset)
-    }
+    toplot <- subset(toplot, delta < deltasubset)
     toplot <- as.data.frame(toplot)
     breaksS <- c(0,2,4,6,Inf)
 
