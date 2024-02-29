@@ -79,7 +79,7 @@ ggdredgeplotly = function(data,
       theme_bw()
 
 
-    gplotly <- style(ggplotly(gplot2, tooltip = c("x", "LabelInfo")), hoverinfo = "skip", traces = 1)
+    gplotly <- ggplotly(gplot2, tooltip = c("x", "LabelInfo"))
     return(gplotly)
     }
 
