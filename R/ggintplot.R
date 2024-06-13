@@ -12,6 +12,8 @@
 #' @param ylim_manual vector of lower and upper y-axis limits for all plots
 #' @param array For three predictors, switches between 3-way interaction (array = F),
 #' and main effects and all 2-way interactions (array = T)
+#' @param jitter.width control jitter of points horizontally in the main effects, defaults to null to use geom_jitter defaults
+#' @param jitter.height control jitter of points vertically in the main effects, defaults to 0 jitter vertically so actual values of responses are shown
 #'
 #' @details Function for making nice looking interaction plot (both versions) with observations and 95% confidence intervals for each combination of groups.
 #' @examples
@@ -23,11 +25,13 @@
 #' ggintplot(response = "age", groupvars = c("sex", "survived", "passengerClass"), data = TitanicSurvival, na.rm = T, conf.level = 0.9, array = T, ptalpha = .5, pd = .5)
 #' ggintplot(data = TitanicSurvival, response = "age", groupvars = "sex", na.rm = T, conf.level = 0.95)
 #' data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
-#' ToothGrowth %>% ggintplot(response = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T, ptalpha = 0.1)
+#' ToothGrowth %>% ggintplot(response = "len", groupvars = c("dose", "supp"), na.rm = T, conf.level = 0.95, array = T,
+#' ptalpha = 0.1, jitter.width = .1, jitter.height = 0.1)
 
 #' @export
 ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FALSE,
-                        conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3, ylim_manual = NULL)
+                        conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3, ylim_manual = NULL,
+                       jitter.width = NULL, jitter.height = 0)
 {
   #Function to generate a plot array that have pirateplot-ish plots in off diagonals with single explanatory variables
   #Diagonals contain the intplots made both ways... and return as ggplot
@@ -83,7 +87,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plot1 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo, aes(ymin = LL, ymax = UL, x = .data[[groupvars[1]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
@@ -112,7 +117,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plotLL <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo_LL, aes(ymin = LL, ymax = UL, x = .data[[groupvars[1]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo_LL, aes(x = .data[[groupvars[1]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
@@ -136,7 +142,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plotUR <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo_UR, aes(ymin = LL, ymax = UL, x = .data[[groupvars[2]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo_UR, aes(x = .data[[groupvars[2]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
@@ -183,7 +190,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plot11 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo_11, aes(ymin = LL, ymax = UL, x = .data[[groupvars[1]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo_11, aes(x = .data[[groupvars[1]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
@@ -194,7 +202,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plot22 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo_22, aes(ymin = LL, ymax = UL, x = .data[[groupvars[2]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo_22, aes(x = .data[[groupvars[2]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +
@@ -206,7 +215,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
 
     plot33 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = 0.3) +
-      geom_jitter(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = ptalpha) +
+      geom_jitter(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = ptalpha,
+                  width = jitter.width, height = jitter.height) +
       geom_errorbar(data = summaryinfo_33, aes(ymin = LL, ymax = UL, x = .data[[groupvars[3]]]), alpha = 1, width=.2, col = "black") +
       #geom_line(data = summaryinfo, aes(x = .data[[groupvars[1]]], y = mean)) +
       geom_point(data = summaryinfo_33, aes(x = .data[[groupvars[3]]], y = mean), size = 3, shape = 20, col = "black", alpha = .5) +

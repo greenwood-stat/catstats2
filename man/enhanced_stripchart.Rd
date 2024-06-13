@@ -12,7 +12,8 @@ enhanced_stripchart(
   .drop = TRUE,
   ptalpha = 0.3,
   jitterwidth = 0.1,
-  jitterheight = 0
+  jitterheight = 0,
+  ylab = NULL
 )
 }
 \arguments{
@@ -46,5 +47,8 @@ data(TitanicSurvival, package = "carData")
 TitanicSurvival \%>\% enhanced_stripchart(age ~ passengerClass)
 data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
 enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
-  jitterwidth = 0.1, jitterheight = 0)
+  jitterwidth = 0.1, jitterheight = 0) +
+  labs(title = "Plot of odontoblast cell lengths \n by dosage level",
+    x = "Dosage of vitamin C",
+    y = "Cell length (microns)")
 }

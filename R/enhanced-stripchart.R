@@ -21,12 +21,15 @@
 #' TitanicSurvival %>% enhanced_stripchart(age ~ passengerClass)
 #' data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
 #' enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
-#'   jitterwidth = 0.1, jitterheight = 0)
+#'   jitterwidth = 0.1, jitterheight = 0) +
+#'   labs(title = "Plot of odontoblast cell lengths \n by dosage level",
+#'     x = "Dosage of vitamin C",
+#'     y = "Cell length (microns)")
 
 #' @export
 enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
                                  conf.level=.95, .drop=TRUE, ptalpha = 0.3,
-                                 jitterwidth = 0.1, jitterheight = 0)
+                                 jitterwidth = 0.1, jitterheight = 0, ylab = NULL)
 {
   #Function to generate pirateplot-ish plot using ggplot
 
@@ -75,7 +78,6 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
   }
 
   summaryinfo <- summarySE(data = dataR, measurevar = measurevar, groupvars = groupvars, na.rm = na.rm, conf.level = conf.level)
-
 
   plot1 <- dataR %>% ggplot() +
     geom_violin(aes(x = .data[[groupvars]], y = .data[[measurevar]], color = .data[[groupvars]]), alpha = 0.3) +
