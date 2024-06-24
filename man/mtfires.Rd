@@ -15,7 +15,7 @@ A data frame with 23 rows and 3 columns:
 }
 \source{
 Gude, P.H., Cookson, A.J., Greenwood, M.C., and Haggerty, M. (2009)
-Homes in Wildfire-Prone Areas:An Empirical Analysis of Wildfire Suppression
+Homes in Wildfire-Prone Areas: An Empirical Analysis of Wildfire Suppression
 Costs and Climate Change.
 }
 \usage{
