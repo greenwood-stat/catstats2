@@ -1,10 +1,6 @@
 #' Data from rat tibia data sets from Barra et al. (2025) - Dataset 1 of 3
 #'
-<<<<<<< HEAD
 #' These data contain measurements related to bone health and gastrointestinal conditions in rats subjected to nicotine exposure and coenzyme Q10 supplementation. See original paper for use of these data in figures 5, 6, 7, and 8.
-=======
-#' These data contain measurements related to bone health and gastrointestinal conditions in rats subjected to nicotine exposure and coenzyme Q10 supplementation.
->>>>>>> bdf9f88fd2240bbd79d9c49a36b75e533e8410a9
 #'
 #' @format a \code{data.frame} with 56 observations on 8 variables:
 #' \describe{
@@ -22,11 +18,7 @@
 #' @docType data
 #' @references
 #' Barra, R. H. D., Piovezan, B. R., Matheus, H. R., Vitória, O. A. P., de Abreu Furquim, E. M., Fiorin, L. G., Santos, E. O., & de Almeida, J. M. (2025). Effect of coenzyme Q10 on tibial fracture resistance in nicotine-exposed rats. _PLoS ONE, 20_(1), e0315462. https://doi.org/10.1371/journal.pone.0315462
-<<<<<<< HEAD
 #' @source \url{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0315462}, data for R package prepared by Amelia Pomazal
-=======
-#' @source \url{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0315462}
->>>>>>> bdf9f88fd2240bbd79d9c49a36b75e533e8410a9
 #' @keywords data coenzyme Q10 nicotine bone health rats
 #'
 #' @examples
