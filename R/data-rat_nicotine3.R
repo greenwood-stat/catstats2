@@ -21,22 +21,23 @@
 #' @keywords data coenzyme Q10 nicotine bone health rats
 #'
 #' @examples
-#' 
+#'
 #' library(tidyverse)
+#' data(rat_nicotine3)
 #' rat_nicotine3 <- rat_nicotine3 %>%
 #'   mutate(GROUP = paste(SUBSTANCE, SOLUTION, EUTHANASIA, sep = "_"),
 #'      GROUP = factor(GROUP))
-#'      
+#'
 #' # Summary of bone area percentage by group
 #' rat_nicotine3 %>%
 #'   group_by(GROUP) %>%
 #'   summarize(mean_area = mean(TOTAL_AREA_PERCENT, na.rm = TRUE),
 #'             mean_porosity = mean(POROSITY, na.rm = TRUE))
-#'             
+#'
 #' # Enhanced stripchart of porosity across groups
 #'   enhanced_stripchart(data = rat_nicotine3, POROSITY ~ GROUP) +
 #'     labs(title = "Bone Porosity Across Treatment Groups",
 #'        x = "Experimental Group",
 #'        y = "Porosity (%)")
-#'   
+#'
 "rat_nicotine3"

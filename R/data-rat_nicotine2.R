@@ -21,12 +21,13 @@
 #' @keywords data coenzyme Q10 nicotine bone health rats
 #'
 #' @examples
-#' 
+#'
 #' library(tidyverse)
+#' data(rat_nicotine2)
 #' rat_nicotine2 <- rat_nicotine2 %>%
 #'   mutate(GROUP = paste(SUBSTANCE, SOLUTION, EUTHANASIA, sep = "_"),
 #'      GROUP = factor(GROUP))
-#'      
+#'
 #' # View two-way interactions between the treatment levels
 #'  ggintplot(response = "MAX_RESISTANCE", groupvars = c("SUBSTANCE", "SOLUTION", "EUTHANASIA"), data = rat_nicotine2)
 #'
@@ -35,6 +36,6 @@
 #'      labs(title = "Tibial Weight Across Treatment Groups",
 #'        x = "Experimental Group",
 #'        y = "Maximum Tibial Strength (N)")
-#'   
-#'   
+#'
+#'
 "rat_nicotine2"

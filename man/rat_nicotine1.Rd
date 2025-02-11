@@ -30,6 +30,7 @@ These data contain measurements related to bone health and gastrointestinal cond
 
 # Create a treatment group variable
 library(tidyverse)
+data(rat_nicotine1)
 rat_nicotine1 <- rat_nicotine1 \%>\%
   mutate(GROUP = paste(SUBSTANCE, SOLUTION, EUTHANASIA, sep = "_"),
     GROUP = factor(GROUP))
