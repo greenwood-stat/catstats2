@@ -22,13 +22,13 @@
 #' @keywords data coenzyme Q10 nicotine bone health rats
 #'
 #' @examples
-#' 
+#'
 #' # Create a treatment group variable
 #' library(tidyverse)
 #' rat_nicotine1 <- rat_nicotine1 %>%
 #'   mutate(GROUP = paste(SUBSTANCE, SOLUTION, EUTHANASIA, sep = "_"),
 #'     GROUP = factor(GROUP))
-#'    
+#'
 #' # View two-way interactions between the treatment levels
 #' ggintplot(response = "WEIGHT", groupvars = c("SUBSTANCE", "SOLUTION", "EUTHANASIA"), data = rat_nicotine1)
 #'
@@ -37,5 +37,5 @@
 #'     labs(title = "Tibial Weight Across Treatment Groups",
 #'      x = "Experimental Group",
 #'      y = "Tibial Weight (g)")
-#'   
+#'
 "rat_nicotine1"

@@ -33,7 +33,7 @@ library(tidyverse)
 rat_nicotine1 <- rat_nicotine1 \%>\%
   mutate(GROUP = paste(SUBSTANCE, SOLUTION, EUTHANASIA, sep = "_"),
     GROUP = factor(GROUP))
-   
+
 # View two-way interactions between the treatment levels
 ggintplot(response = "WEIGHT", groupvars = c("SUBSTANCE", "SOLUTION", "EUTHANASIA"), data = rat_nicotine1)
 
@@ -42,7 +42,7 @@ enhanced_stripchart(data = rat_nicotine1, WEIGHT ~ GROUP) +
     labs(title = "Tibial Weight Across Treatment Groups",
      x = "Experimental Group",
      y = "Tibial Weight (g)")
-  
+
 }
 \references{
 Barra, R. H. D., Piovezan, B. R., Matheus, H. R., Vitória, O. A. P., de Abreu Furquim, E. M., Fiorin, L. G., Santos, E. O., & de Almeida, J. M. (2025). Effect of coenzyme Q10 on tibial fracture resistance in nicotine-exposed rats. \emph{PLoS ONE, 20}(1), e0315462. https://doi.org/10.1371/journal.pone.0315462
