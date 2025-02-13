@@ -1,6 +1,6 @@
 #
 # Author: Greta Linse
-# Last revised: February 3, 2025
+# Last revised: February 11, 2025
 #
 # Call this function using model_diagram(model_name) where "model_name" is an
 # lme object created from the nlme package.
@@ -36,10 +36,10 @@ library(forcats)
 #' @export
 #'
 #' @examples
-#' # merMod object example
-#' library(lme4)
 #' library(tidyverse)
 #' library(DiagrammeR)
+#' # merMod object example
+#' library(lme4)
 #'
 #' sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' summary(sleepstudy_lmer)
@@ -107,7 +107,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     while(reIdx > 0){
       tempREName <- paste0("RE",reIdx)
       thisRE_levels <- unique(theseGroups_elipses[,tempREName][[1]])
-      theseRElevels_numeric <- as.numeric(thisRE_levels)
+      theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         theseGroups_elipses <- theseGroups_elipses %>%
           mutate(thisLevel = fct_relevel(get(tempREName),
@@ -171,7 +171,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     names(theseGroups_elipses)[which(names(theseGroups_elipses)==prevColName)] <- "prevRE"
     if(i == 1){
       thisRE_levels <- unique(theseGroups_elipses[,thisColName][[1]])
-      theseRElevels_numeric <- as.numeric(thisRE_levels)
+      theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         maxGrpNum <- length(theseRElevels_numeric)
         firstGrpName <- head(sort(theseRElevels_numeric),n=1)
@@ -223,9 +223,11 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
             bind_rows(sub_group_subgroup_table)
         }
       }
-      group_subgroup_table <- new_group_subgroup_table %>%
+      suppressMessages(
+        group_subgroup_table <- new_group_subgroup_table %>%
         select(-c(onescol, fPrevNestedVar, groupID)) %>%
         filter(keepThis==1)
+        )
 
       fullNestedName <- RElist[numRE-i+1]
       names(theseGroups_elipses)[which(names(theseGroups_elipses)==thisColName)] <- "thisRE"
@@ -341,12 +343,14 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     endPosVal <- length(unique(nested_df[[thisName]]))
     rowRange <- rep(as.numeric(NA), endPosVal)
     names(nested_df)[which(names(nested_df)==thisName)] <- "thisName"
-    rowRange <- nested_df %>%
+    suppressMessages(
+      rowRange <- nested_df %>%
       group_by(thisName) %>%
       summarize(rowVal = mean(cur_group_rows())) %>%
       arrange(rowVal) %>%
       left_join(nested_df %>% select(thisName, actName),
                 multiple="first")
+      )
 
     names(nested_df)[which(names(nested_df)=="thisName")] <- paste0("Nested",i)
 
@@ -419,28 +423,30 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
                          x_pos=seq(from=1, to=numRE*2+1,by=2),
                          y_pos=max(grp_lng_lme_model$y_pos) - 1))
 
-  if("extrafont" %in% rownames(installed.packages())){
-    do.call('library', list("extrafont"))
-    useFontName = "Times New Roman Bold"
-  } else{
-    useFontName = "Arial"
-  }
-  nodes_lme_model <- create_node_df(
-    n = nrow(grp_lng_lme_model),
-    type="a",
-    label = grp_lng_lme_model$label,
-    style="filled",
-    color="aqua",
-    fontname=useFontName,
-    fontcolor="black",
-    shape=c(rep("circle",3), # First RE will always have three circles for first, middle, and last
-            rep("circle",nrow(grp_lng_lme_model)-(3+2*(numRE+1))), # will always subtract 9
-            rep("box",2*(numRE+1))), # 2*numRE boxes on the top for the random effect labels and fixed effect boxes
-    node_aes(
-      x=grp_lng_lme_model$x_pos,
-      y=grp_lng_lme_model$y_pos,
-      fixedsize = FALSE
-    ))
+  # if("extrafont" %in% rownames(installed.packages())){
+  #   do.call('library', list("extrafont"))
+  #   useFontName = "Times New Roman Bold"
+  # } else{
+  #   useFontName = "Arial"
+  # }
+  useFontName = "Arial"
+  suppressMessages(
+    nodes_lme_model <- create_node_df(
+      n = nrow(grp_lng_lme_model),
+      type="a",
+      label = grp_lng_lme_model$label,
+      style="filled",
+      color="aqua",
+      fontname=useFontName,
+      fontcolor="black",
+      shape=c(rep("circle",3), # First RE will always have three circles for first, middle, and last
+              rep("circle",nrow(grp_lng_lme_model)-(3+2*(numRE+1))), # will always subtract 9
+              rep("box",2*(numRE+1))), # 2*numRE boxes on the top for the random effect labels and fixed effect boxes
+      node_aes(
+        x=grp_lng_lme_model$x_pos,
+        y=grp_lng_lme_model$y_pos,
+        fixedsize = FALSE))
+  )
 
   setNames <- paste0("Set", 1:numRE)
   groupSets <- list(rep(list(), numRE))
@@ -474,17 +480,18 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
       rel = "requires",
       color = "black")
   graph_lme_model <- create_graph(nodes_df=nodes_lme_model,
-                                  edges_df=edges_lme_model,
-  )
+                                  edges_df=edges_lme_model)
   if(!is.null(this_file_path)){
-    graph_lme_model %>%
-      export_graph(file_name = this_file_path,
-                   file_type = this_file_type,
-                   width=widthVal,height=heightVal)
+    suppressWarnings(
+      graph_lme_model %>%
+        export_graph(file_name = this_file_path,
+                     file_type = this_file_type,
+                     width=widthVal,height=heightVal)
+    )
   }
   graph_lme_model %>%
-    #render_graph()
-    render_graph(width=widthVal,height=heightVal)
+      render_graph(width=widthVal,height=heightVal,
+                   output="graph", as_svg=TRUE)
 
 }
 
@@ -535,6 +542,10 @@ catchNumeric <- function(strList) {
 #' @export
 #'
 #' @examples
+#' #' library(nlme)
+#'
+#' sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
+#' getFixLevel(sleepstudy_lme, fixedCall = sleepstudy_lme$call$fixed, randomCall = sleepstudy_lme$call$random)
 getFixLevel <- function(lme_model, fixedCall, randomCall){
 
   data <- lme_model$data
@@ -741,6 +752,7 @@ getFixLevel <- function(lme_model, fixedCall, randomCall){
 #' @export
 #'
 #' @examples
+#' \dontrun{inner_perc_R(X[, j], grps[, i])}
 inner_perc_R <- function(x, grp){
 
   if (length(x) != length(grp)) {
@@ -793,6 +805,7 @@ inner_perc_R <- function(x, grp){
 #' @export
 #'
 #' @examples
+#' \dontrun{inner_perc_table_R(X, grps)}
 inner_perc_table_R <- function(X, grps, p = NULL, Q = NULL){
 
     # Input validation and preparation

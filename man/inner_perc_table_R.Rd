@@ -28,3 +28,6 @@ effect variable.
 Translated \code{inner_perc_table()} from nlme's nlmefit.c file (https://github.com/cran/nlme/blob/master/src/nlmefit.c)
 Code translation assistance provided by Anthropic's Claude 3.5 Sonnet (2024 version) on December 17, 2024.
 }
+\examples{
+\dontrun{inner_perc_table_R(X, grps)}
+}

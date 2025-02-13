@@ -24,3 +24,9 @@ of freedom calculations.
 to identify the correct placement of each fixed effect and interaction term
 in a model structure diagram for hierarchical mixed effects models.
 }
+\examples{
+#' library(nlme)
+
+sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
+getFixLevel(sleepstudy_lme, fixedCall = sleepstudy_lme$call$fixed, randomCall = sleepstudy_lme$call$random)
+}
