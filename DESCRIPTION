@@ -1,6 +1,6 @@
 Package: catstats2
 Title: Upper Level Statistics for Montana State University Bobcats
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: 
     person(given = "Mark",
            family = "Greenwood",
@@ -8,11 +8,18 @@ Authors@R:
            email = "greenwood@montana.edu")
 Description: Contains a suite of things that are used in  "Intermediate Statistics with R" and "Linear Mixed Models with Applications and Extensions in R" written by Mark Greenwood. It also contains functions to support "Montana State Introductory Statistics with R" written by Nicole Carnegie, Stacey Hancock, Elijah Meyer, Jade Schmidt, and Melinda Yager. This package contains functions for enhanced interaction plots and simulation-based inference. It also will install most packages needed for the materials in the courses that use these books.
 Depends:
-    R (>= 4.1)
+    R (>= 4.1),
+    ggplot2,
+    dplyr,
+    nlme,
+    lme4,
+    lmerTest,
+    ggrepel,
+    cetcolor,
+    DiagrammeR
 Imports:
     car,
     carData,
-    corrplot,
     effects,
     ggthemes,
     GGally,
@@ -21,9 +28,7 @@ Imports:
     mosaicData,
     multcomp,
     MuMIn,
-    nlme,
-    lme4,
-    lmerTest,
+    emmeans,
     openintro,
     psych,
     RColorBrewer,
@@ -31,24 +36,20 @@ Imports:
     rmarkdown,
     tidyverse,
     viridis,
-    yarrr,
     patchwork,
     ggpubr,
-    ggrepel,
-    cetcolor,
-    plotly
+    easyalluvial
 Suggests:
     alr4,
     coneproj,
-    easyalluvial,
     faraway,
     heplots,
-    MASS,
     poLCA,
     Sleuth3,
     smdata,
     spuRs,
-    survey
+    survey,
+    plotly
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
