@@ -42,13 +42,13 @@ library(tidyverse)
 library(DiagrammeR)
 # merMod object example
 library(lme4)
+library(nlme)
 
 sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 summary(sleepstudy_lmer)
 model_diagram(sleepstudy_lmer)
 
 # lme object example
-library(nlme)
 
 sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
 summary(sleepstudy_lme)

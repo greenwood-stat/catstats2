@@ -1,6 +1,6 @@
 #
 # Author: Greta Linse
-# Last revised: February 11, 2025
+# Last revised: February 22, 2025
 #
 # Call this function using model_diagram(model_name) where "model_name" is an
 # lme object created from the nlme package.
@@ -40,13 +40,13 @@ library(forcats)
 #' library(DiagrammeR)
 #' # merMod object example
 #' library(lme4)
+#' library(nlme)
 #'
 #' sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' summary(sleepstudy_lmer)
 #' model_diagram(sleepstudy_lmer)
 #'
 #' # lme object example
-#' library(nlme)
 #'
 #' sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
 #' summary(sleepstudy_lme)
@@ -309,7 +309,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
   }
 
   theseGroups_subset3_clean <- theseGroups_subset3 %>%
-    dplyr::select(-ends_with("rawPos")) %>%
+    select(-ends_with("rawPos")) %>%
     as_tibble()
 
   n_levels <- c()
