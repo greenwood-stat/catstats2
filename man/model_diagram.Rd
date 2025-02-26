@@ -38,19 +38,19 @@ A DiagrammeR object.
 object visualizing the fixed and random effects structure.
 }
 \examples{
-library(tidyverse)
-library(DiagrammeR)
-# merMod object example
+# library(tidyverse)
+# library(DiagrammeR)
+## merMod object example
 library(lme4)
 library(nlme)
 
-sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+sleepstudy_lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 summary(sleepstudy_lmer)
 model_diagram(sleepstudy_lmer)
 
 # lme object example
 
-sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
+sleepstudy_lme <- nlme::lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
 summary(sleepstudy_lme)
 model_diagram(sleepstudy_lme)
 }
