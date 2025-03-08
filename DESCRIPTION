@@ -1,6 +1,6 @@
 Package: catstats2
 Title: Upper Level Statistics for Montana State University Bobcats
-Version: 0.2.3
+Version: 0.3.0
 Authors@R: 
     person(given = "Mark",
            family = "Greenwood",
@@ -40,7 +40,8 @@ Imports:
     ggrepel,
     cetcolor,
     DiagrammeR,
-    forcats
+    forcats,
+    gtools
 Suggests:
     alr4,
     coneproj,

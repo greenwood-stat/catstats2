@@ -25,11 +25,11 @@
 #' @export
 #'
 #' @examples
-#' # library(tidyverse)
-#' # library(DiagrammeR)
+#'  library(tidyverse)
+#'  library(DiagrammeR)
 #' ## merMod object example
-#' library(lme4)
-#' library(nlme)
+#'  library(lme4)
+#'  library(nlme)
 #'
 #' sleepstudy_lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' summary(sleepstudy_lmer)
@@ -102,19 +102,19 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     reIdx <- numRE
     while(reIdx > 0){
       tempREName <- paste0("RE",reIdx)
-      thisRE_levels <- unique(theseGroups_elipses[,tempREName][[1]])
+      thisRE_levels <- gtools::mixedsort(unique(theseGroups_elipses[,tempREName][[1]]))
       theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         theseGroups_elipses <- theseGroups_elipses %>%
           dplyr::mutate(thisLevel = forcats::fct_relevel(get(tempREName),
-                                                         as.character(sort(theseRElevels_numeric))),
+                                                         gtools::mixedsort(as.character(theseRElevels_numeric))),
                         numThisLvl = as.numeric(thisLevel)) %>%
           dplyr::arrange(numThisLvl) %>%
           dplyr::select(-c(thisLevel, numThisLvl))
       } else{
         theseGroups_elipses <- theseGroups_elipses %>%
           dplyr::mutate(thisLevel = forcats::fct_relevel(get(tempREName),
-                                                         sort(thisRE_levels)),
+                                                         gtools::mixedsort(thisRE_levels)),
                  numThisLvl = as.numeric(thisLevel)) %>%
           dplyr::arrange(numThisLvl) %>%
           dplyr::select(-c(thisLevel, numThisLvl))
@@ -137,7 +137,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     theseGroups_elipses <- theseGroups %>%
       dplyr::mutate(onesCol = 1,
              firstLevel = forcats::fct_relevel(get(RElist[1]),
-                                      sort(levels(get(RElist[1])))),
+                                      gtools::mixedsort(levels(get(RElist[1])))),
              numFirstLvl = as.numeric(firstLevel)) %>%
       dplyr::arrange(numFirstLvl) %>%
       tibble::rowid_to_column(var = "orderID") %>%
@@ -170,12 +170,12 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
       theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         maxGrpNum <- length(theseRElevels_numeric)
-        firstGrpName <- head(sort(theseRElevels_numeric),n=1)
-        lastGrpName <- tail(sort(theseRElevels_numeric),n=1)
+        firstGrpName <- head(gtools::mixedsort(theseRElevels_numeric),n=1)
+        lastGrpName <- tail(gtools::mixedsort(theseRElevels_numeric),n=1)
       } else{
         maxGrpNum <- length(thisRE_levels)
-        firstGrpName <- head(sort(thisRE_levels),n=1)
-        lastGrpName <- tail(sort(thisRE_levels),n=1)
+        firstGrpName <- head(gtools::mixedsort(thisRE_levels),n=1)
+        lastGrpName <- tail(gtools::mixedsort(thisRE_levels),n=1)
       }
 
       theseGroups_elipses <- theseGroups_elipses %>%

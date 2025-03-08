@@ -38,11 +38,11 @@ A DiagrammeR object.
 object visualizing the fixed and random effects structure.
 }
 \examples{
-# library(tidyverse)
-# library(DiagrammeR)
+ library(tidyverse)
+ library(DiagrammeR)
 ## merMod object example
-library(lme4)
-library(nlme)
+ library(lme4)
+ library(nlme)
 
 sleepstudy_lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 summary(sleepstudy_lmer)
