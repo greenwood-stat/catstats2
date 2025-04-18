@@ -1,8 +1,19 @@
 #
 # Author: Greta Linse
-# Last revised: February 25, 2025
+# Last revised: April 17, 2025
+#
+# Call this function using model_diagram(model_name) where "model_name" is an
+# lme object created from the nlme package.
 #
 
+library(nlme)
+library(tidyverse)
+library(ggthemes)
+library(car)
+library(effects)
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(forcats)
 
 #------------function is below------------------#
 #' Hierarchical model diagramming
@@ -20,59 +31,131 @@
 #' @param heightVal Optional. Height of diagram in pixels. Default is `1600`.
 #' @param includeSizes Optional. Include group sizes in random effect labels.
 #'    Default is `TRUE`.
+#' @param includeLabels Optional. Include labels for the model diagram components.
+#'    Default is `TRUE`.
+#' @param nodeColors Optional. Function specifying the colors ([md_color()])
+#'    for the outline of the nodes. Components can be specified individually
+#'    (`diagram`, `random`, and `fixed`).
+#' @param nodeFillColors Optional. Function specifying the colors ([md_fill()])
+#'    for the fill color of the nodes. Components can be specified individually
+#'    (`diagram`, `random`, and `fixed`).
+#' @param nodeFontColors Optional. Function specifying the colors ([md_fontColor()])
+#'    for the font color of text in the nodes. Components can be specified
+#'    individually (`diagram`, `random`, and `fixed`).
 #'
+#' @details
+#' NOTE: When including this function in an RMD document and knitting to PDF, the
+#' graphic size variables `widthVal` and `heightVal` do not currently work. It is
+#' recommended that instead the image is exported to a file such as a PDF and then
+#' reimported to the document. See the examples below.
 #' @returns A DiagrammeR object.
 #' @export
 #'
 #' @examples
-#'  library(tidyverse)
-#'  library(DiagrammeR)
-#' ## merMod object example
-#'  library(lme4)
-#'  library(nlme)
+#' library(tidyverse)
+#' library(DiagrammeR)
+#' # merMod object example
+#' library(lme4)
+#' library(nlme)
 #'
-#' sleepstudy_lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' summary(sleepstudy_lmer)
 #' model_diagram(sleepstudy_lmer)
 #'
 #' # lme object example
 #'
-#' sleepstudy_lme <- nlme::lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
+#' sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
 #' summary(sleepstudy_lme)
 #' model_diagram(sleepstudy_lme)
-model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "PNG", widthVal = 800, heightVal = 1600, includeSizes = TRUE){
-
+#'
+#' # Knitting to PDF example - Don't run
+#' \dontrun{
+#' model_diagram(sleepstudy_lmer,
+#'               this_file_path="sleepstudy_lmer_modeldiagram.PDF",
+#'               this_file_type="PDF")
+#' knitr::include_graphics("sleepstudy_lmer_modeldiagram.PDF")
+#'               }
+#'
+model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "PNG",
+                          widthVal = 800, heightVal = 1600, includeSizes = TRUE,
+                          includeLabels = TRUE,
+                          nodeColors = md_color(diagram="gray25", random="gray25", fixed="gray25"),
+                          nodeFillColors = md_fill(diagram="aliceblue", random="aliceblue", fixed="darkseagreen1"),
+                          nodeFontColors = md_fontColor(diagram="black", random="black",fixed="black")
+                          ){
+  # if(is.null(nodeColors$diagram)){
+  #   nodeColors$diagram <- "gray25"
+  # }
+  # if(is.null(nodeColors$random)){
+  #   nodeColors$random <- "gray25"
+  # }
+  # if(is.null(nodeColors$fixed)){
+  #   nodeColors$fixed <- "gray25"
+  # }
+  # if(is.null(nodeFillColors$diagram)){
+  #   nodeFillColors$diagram <- "aliceblue"
+  # }
+  # if(is.null(nodeFillColors$random)){
+  #   nodeFillColors$random <- "aliceblue"
+  # }
+  # if(is.null(nodeFillColors$fixed)){
+  #   nodeFillColors$fixed <- "darkseagreen1"
+  # }
+  # if(is.null(nodeFontColors$diagram)){
+  #   nodeFontColors$diagram <- "black"
+  # }
+  # if(is.null(nodeFontColors$random)){
+  #   nodeFontColors$random <- "black"
+  # }
+  # if(is.null(nodeFontColors$fixed)){
+  #   nodeFontColors$fixed <- "black"
+  # }
   if(is(this_model,"merMod")){
     lmer_formula <- deparse1(formula(this_model), collapse=" ")
     lmer_formula_fixed <- deparse1(formula(this_model, fixed.only=TRUE), collapse=" ")
-    lmer_formula_random <- substring(stringr::str_remove(lmer_formula,
-                                                stringr::fixed(lmer_formula_fixed)),4)
-    newRandomString <- ""
-    newRandomForm <- list()
-    if(stringr::str_detect(lmer_formula_random,stringr::fixed("+"))){
+    lmer_formula_random <- substring(str_remove(lmer_formula, fixed(lmer_formula_fixed)),4)
+
+    if(str_detect(lmer_formula_random,fixed("+"))){
       stop("Specification of random effects in multiple parts crossed or otherwise is not yet implemented.")
     }
-    if(stringr::str_detect(lmer_formula_fixed, stringr::fixed("+ offset("))){
+    if(str_detect(lmer_formula_fixed, fixed("+ offset("))){
       lmer_formula_fixed_clean <- substring(lmer_formula_fixed,
                                             first=1,
-                                            last=stringr::str_locate(lmer_formula_fixed,
-                                                            stringr::fixed("offset("))[1]-3)
+                                            last=str_locate(lmer_formula_fixed, fixed("offset("))[1]-3)
+    }  else if(str_detect(lmer_formula_fixed, fixed("cbind("))){
+      numeratorResponse <- substring(lmer_formula_fixed,
+                                     first=7,
+                                     last = str_locate(lmer_formula_fixed,fixed(","))-1)[[1]]
+      lmer_formula_fixed_clean <- paste(numeratorResponse, substring(lmer_formula_fixed,
+                                                                     first=str_locate(lmer_formula_fixed, fixed(")"))+1,
+                                                                     last=str_length(lmer_formula_fixed))[[1]])
     } else{
       lmer_formula_fixed_clean <- lmer_formula_fixed
     }
-    if(newRandomString!=""){
-      lmer_formula_random_clean_asForm <- newRandomForm
-    } else{
-      lmer_formula_random_clean <- stringr::str_remove(stringr::str_remove(lmer_formula_random,
-                                                         stringr::fixed("(")),
-                                              stringr::fixed(")"))
-      lmer_formula_random_clean_asForm <- as.formula(paste0("~", parse(text=lmer_formula_random_clean)))
+    if(str_count(lmer_formula_random, fixed(":"))>=1){
+      lmer_formula_random_nested <- str_replace(lmer_formula_random,fixed(":"),"/")
+      lmer_formula_random_clean <- str_remove(str_remove(lmer_formula_random_nested, fixed("(")),fixed(")"))
+      lmer_formula_random_clean_asForm <- as.formula(paste0("~",parse(text=lmer_formula_random_clean)))
+    } else {
+      lmer_formula_random_clean <- str_remove(str_remove(lmer_formula_random, fixed("(")),fixed(")"))
+      lmer_formula_random_clean_asForm <- as.formula(paste0("~",parse(text=lmer_formula_random_clean)))
     }
 
     lmer_model_data <- model.frame(this_model)
-    lme_model <- nlme::lme(eval(parse(text = lmer_formula_fixed_clean)),
-                           random = lmer_formula_random_clean_asForm,
-                           data = lmer_model_data)
+    if(str_detect(lmer_formula_fixed, fixed("cbind("))){
+      as.data.frame(model.frame(this_model)[[1]])[1]
+      lmer_model_data <- cbind(as.data.frame(model.frame(this_model)[[1]])[1],model.frame(this_model)[-1])
+    }
+    tryCatch(
+      lme_model <- lme(eval(parse(text=lmer_formula_fixed_clean)),
+                       random=lmer_formula_random_clean_asForm,
+                       data=lmer_model_data),
+      error = function(e){
+        message("Could not convert the merMod object to an lme object.")
+      })
+    if(!exists("lme_model")){
+      stop("Invalid specification of random effects. Please check that the random effects are specified in hierarchical notation.")
+    }
   } else if(is(this_model, "lme")){
     lme_model <- this_model
   } else {
@@ -85,72 +168,70 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
 
   RElist <- names(lme_model$dims$qvec)[1:lme_model$dims$Q]
 
-  numDelims <- max(stringr::str_count(lme_model$groups[,RElist[1]],
-                             stringr::fixed("/")))
+  numDelims <- max(str_count(lme_model$groups[,RElist[1]],fixed("/")))
   numRE <- lme_model$dims$Q
 
   theseGroups <- lme_model$groups %>%
-    tidyr::separate_wider_delim(!!RElist[1],
-                                cols_remove = FALSE,
-                                delim = "/",
-                                names = paste0("RE",1:numRE)) %>%
-    dplyr::relocate(paste0("RE",1:numRE), .after = everything())
+    separate_wider_delim(!!RElist[1],
+                         cols_remove=FALSE,
+                         delim="/", names=paste0("RE",1:numRE)) %>%
+    relocate(paste0("RE",1:numRE), .after=everything())
 
   if(numRE > 1){
     theseGroups_elipses <- theseGroups %>%
-      dplyr::mutate(onesCol = 1)
+      mutate(onesCol = 1)
     reIdx <- numRE
     while(reIdx > 0){
       tempREName <- paste0("RE",reIdx)
-      thisRE_levels <- gtools::mixedsort(unique(theseGroups_elipses[,tempREName][[1]]))
+      thisRE_levels <- unique(theseGroups_elipses[,tempREName][[1]])
       theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         theseGroups_elipses <- theseGroups_elipses %>%
-          dplyr::mutate(thisLevel = forcats::fct_relevel(get(tempREName),
-                                                         gtools::mixedsort(as.character(theseRElevels_numeric))),
-                        numThisLvl = as.numeric(thisLevel)) %>%
-          dplyr::arrange(numThisLvl) %>%
-          dplyr::select(-c(thisLevel, numThisLvl))
+          mutate(thisLevel = fct_relevel(get(tempREName),
+                                         as.character(sort(theseRElevels_numeric))),
+                 numThisLvl = as.numeric(thisLevel)) %>%
+          arrange(numThisLvl) %>%
+          select(-c(thisLevel, numThisLvl))
       } else{
         theseGroups_elipses <- theseGroups_elipses %>%
-          dplyr::mutate(thisLevel = forcats::fct_relevel(get(tempREName),
-                                                         gtools::mixedsort(thisRE_levels)),
+          mutate(thisLevel = fct_relevel(get(tempREName),
+                                         sort(thisRE_levels)),
                  numThisLvl = as.numeric(thisLevel)) %>%
-          dplyr::arrange(numThisLvl) %>%
-          dplyr::select(-c(thisLevel, numThisLvl))
+          arrange(numThisLvl) %>%
+          select(-c(thisLevel, numThisLvl))
       }
 
       reIdx <- reIdx - 1
     }
     theseGroups_elipses <- theseGroups_elipses %>%
-      tibble::rowid_to_column(var="orderID") %>%
-      dplyr::group_by(get(RElist[1])) %>%
-      dplyr::rename(thisRE = `get(RElist[1])`) %>%
-      dplyr::mutate(cumSumCol = cumsum(onesCol),
-             ObsLevel = dplyr::case_when(cumSumCol == 1 ~ "Obs. 1",
-                                         cumSumCol == max(cumSumCol, na.rm = TRUE) ~
-                                           paste("Obs.", cumSumCol),
-                                         TRUE ~ "...")) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(-c(onesCol, cumSumCol, thisRE))
-  } else if(numRE == 1){
-    theseGroups_elipses <- theseGroups %>%
-      dplyr::mutate(onesCol = 1,
-             firstLevel = forcats::fct_relevel(get(RElist[1]),
-                                      gtools::mixedsort(levels(get(RElist[1])))),
-             numFirstLvl = as.numeric(firstLevel)) %>%
-      dplyr::arrange(numFirstLvl) %>%
-      tibble::rowid_to_column(var = "orderID") %>%
-      dplyr::select(-c(firstLevel, numFirstLvl)) %>%
-      dplyr::group_by(get(RElist[1])) %>%
-      dplyr::rename(thisRE = `get(RElist[1])`) %>%
-      dplyr::mutate(cumSumCol = cumsum(onesCol),
-             ObsLevel = dplyr::case_when(cumSumCol==1 ~ "Obs. 1",
-                                  cumSumCol==max(cumSumCol, na.rm = TRUE) ~
+      rowid_to_column(var="orderID") %>%
+      group_by(get(RElist[1])) %>%
+      rename(thisRE = `get(RElist[1])`) %>%
+      mutate(cumSumCol = cumsum(onesCol),
+             ObsLevel = case_when(cumSumCol==1 ~ "Obs. 1",
+                                  cumSumCol==max(cumSumCol, na.rm=TRUE) ~
                                     paste("Obs.",cumSumCol),
                                   TRUE ~ "...")) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(-c(onesCol, cumSumCol, thisRE))
+      ungroup() %>%
+      select(-c(onesCol, cumSumCol, thisRE))
+  } else if(numRE==1){
+    theseGroups_elipses <- theseGroups %>%
+      mutate(onesCol = 1,
+             firstLevel = fct_relevel(get(RElist[1]),
+                                      sort(levels(get(RElist[1])))),
+             numFirstLvl = as.numeric(firstLevel)) %>%
+      arrange(numFirstLvl) %>%
+      rowid_to_column(var="orderID") %>%
+      select(-c(firstLevel,numFirstLvl)) %>%
+      group_by(get(RElist[1])) %>%
+      rename(thisRE = `get(RElist[1])`) %>%
+      mutate(cumSumCol = cumsum(onesCol),
+             ObsLevel = case_when(cumSumCol==1 ~ "Obs. 1",
+                                  cumSumCol==max(cumSumCol, na.rm=TRUE) ~
+                                    paste("Obs.",cumSumCol),
+                                  TRUE ~ "...")) %>%
+      ungroup() %>%
+      select(-c(onesCol, cumSumCol, thisRE))
   } else{
     error("Model does not have any random effects.")
   }
@@ -162,7 +243,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
 
   for(i in 1:numRE){
     thisColName <- paste0("RE",i)
-    prevColName <- names(theseGroups_elipses)[which(names(theseGroups_elipses) == thisColName)-1]
+    prevColName <- names(theseGroups_elipses)[which(names(theseGroups_elipses)==thisColName)-1]
 
     names(theseGroups_elipses)[which(names(theseGroups_elipses)==prevColName)] <- "prevRE"
     if(i == 1){
@@ -170,21 +251,20 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
       theseRElevels_numeric <- suppressWarnings(as.numeric(thisRE_levels))
       if(sum(as.numeric(!is.na(theseRElevels_numeric)))==length(thisRE_levels)){
         maxGrpNum <- length(theseRElevels_numeric)
-        firstGrpName <- head(gtools::mixedsort(theseRElevels_numeric),n=1)
-        lastGrpName <- tail(gtools::mixedsort(theseRElevels_numeric),n=1)
+        firstGrpName <- head(sort(theseRElevels_numeric),n=1)
+        lastGrpName <- tail(sort(theseRElevels_numeric),n=1)
       } else{
         maxGrpNum <- length(thisRE_levels)
-        firstGrpName <- head(gtools::mixedsort(thisRE_levels),n=1)
-        lastGrpName <- tail(gtools::mixedsort(thisRE_levels),n=1)
+        firstGrpName <- head(sort(thisRE_levels),n=1)
+        lastGrpName <- tail(sort(thisRE_levels),n=1)
       }
 
       theseGroups_elipses <- theseGroups_elipses %>%
         group_by(get(thisColName)) %>%
-        dplyr::rename(thisRE = `get(thisColName)`) %>%
-        dplyr::mutate(thisRE = dplyr::case_when(thisRE==firstGrpName &
-                                                  prevRE != "..." ~ thisRE,
-                                                thisRE==lastGrpName & prevRE != "..."  ~ thisRE,
-                                                TRUE ~ "..."),
+        rename(thisRE = `get(thisColName)`) %>%
+        mutate(thisRE = case_when(thisRE==firstGrpName & prevRE != "..." ~ thisRE,
+                                  thisRE==lastGrpName & prevRE != "..."  ~ thisRE,
+                                  TRUE ~ "..."),
         )
     } else{
       #this RE has some character labels
@@ -192,48 +272,48 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
       fullNestedName <- RElist[numRE-i+1]
       prevNestedOrder <- as.character(unique(theseGroups_elipses[,prevNestedName][[1]]))
       group_subgroup_table <- theseGroups_elipses %>%
-        dplyr::mutate(thisRE = get(thisColName),
+        mutate(thisRE = get(thisColName),
                onescol = 1,
-               fPrevNestedVar = forcats::fct_relevel(get(prevNestedName),
-                                                     prevNestedOrder)) %>%
-        dplyr::group_by(fPrevNestedVar) %>%
-        dplyr::mutate(groupID = dplyr::cur_group_id(),
-               keepThis = dplyr::case_when(prevRE != "..." ~ 1,
-                                           TRUE ~ 0))
+               fPrevNestedVar = fct_relevel(get(prevNestedName),
+                                            prevNestedOrder)) %>%
+        group_by(fPrevNestedVar) %>%
+        mutate(groupID = cur_group_id(),
+               keepThis = case_when(prevRE != "..." ~ 1,
+                                    TRUE ~ 0))
 
       for(j in 1:length(unique(group_subgroup_table$groupID))){
         sub_group_subgroup_table <- group_subgroup_table %>%
-          dplyr::filter(groupID==j)
+          filter(groupID==j)
         sortedThisRE <- sub_group_subgroup_table$thisRE
         minThisRE <- sortedThisRE[[1]]
         maxThisRE <- sortedThisRE[[length(sortedThisRE)]]
         for(k in 1:length(sortedThisRE)){
           thisREVal <- sortedThisRE[[k]]
-          if(thisREVal != minThisRE & thisREVal != maxThisRE){
+          if(thisREVal!=minThisRE & thisREVal!=maxThisRE){
             sub_group_subgroup_table$keepThis[[k]] <- 0
           }
         }
-        if(j == 1){
+        if(j==1){
           new_group_subgroup_table <- sub_group_subgroup_table
         } else{
           new_group_subgroup_table <- new_group_subgroup_table %>%
-            dplyr::bind_rows(sub_group_subgroup_table)
+            bind_rows(sub_group_subgroup_table)
         }
       }
       suppressMessages(
         group_subgroup_table <- new_group_subgroup_table %>%
-          dplyr::select(-c(onescol, fPrevNestedVar, groupID)) %>%
-          filter(keepThis==1)
+        select(-c(onescol, fPrevNestedVar, groupID)) %>%
+        filter(keepThis==1)
         )
 
       fullNestedName <- RElist[numRE-i+1]
       names(theseGroups_elipses)[which(names(theseGroups_elipses)==thisColName)] <- "thisRE"
       names(theseGroups_elipses)[which(names(theseGroups_elipses)==fullNestedName)] <- "fullNestedName"
       theseGroups_elipses <- theseGroups_elipses %>%
-        dplyr::rowwise() %>%
-        dplyr::mutate(keepThis = ifelse(fullNestedName %in% group_subgroup_table[RElist[numRE-i+1]][[1]],1,0 )) %>%
-        dplyr::ungroup() %>%
-        dplyr::mutate(thisRE = dplyr::case_when(keepThis==1 & prevRE != "..." ~ thisRE,
+        rowwise() %>%
+        mutate(keepThis = ifelse(fullNestedName %in% group_subgroup_table[RElist[numRE-i+1]][[1]],1,0 )) %>%
+        ungroup() %>%
+        mutate(thisRE = case_when(keepThis==1 & prevRE != "..." ~ thisRE,
                                   TRUE ~ "..."),
         )
 
@@ -244,11 +324,11 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     names(theseGroups_elipses)[which(names(theseGroups_elipses)=="prevRE")] <- "thisREold"
     if(thisColName %in% names(theseGroups_elipses)){
       theseGroups_elipses <- theseGroups_elipses %>%
-        dplyr::relocate(thisRE, .after=thisREold) %>%
-        dplyr::select(-!!thisColName)
+        relocate(thisRE, .after=thisREold) %>%
+        select(-!!thisColName)
     } else{
       theseGroups_elipses <- theseGroups_elipses %>%
-        dplyr::relocate(thisRE, .after=thisREold)
+        relocate(thisRE, .after=thisREold)
     }
 
     names(theseGroups_elipses)[which(names(theseGroups_elipses)=="thisRE")] <- thisColName
@@ -264,17 +344,17 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
   }
 
   theseGroups_subset <- theseGroups_elipses %>%
-    dplyr::select(-any_of(c("orderID", names(lme_model$groups), "keepThis"))) %>%
+    select(-any_of(c("orderID", names(lme_model$groups), "keepThis"))) %>%
     unique()
 
   theseGroups_subset_posInfo <- theseGroups_subset %>%
-    tibble::rowid_to_column(var = "ObsLevelPos") %>%
-    dplyr::relocate(ObsLevelPos, .after=everything())
+    rowid_to_column(var = "ObsLevelPos") %>%
+    relocate(ObsLevelPos, .after=everything())
 
   # Observation level is first - no grouping by anything, just in the order it is
   theseGroups_subset2 <- theseGroups_subset %>%
-    tibble::rowid_to_column(var="ObsLevel_rawPos") %>%
-    dplyr::relocate(ObsLevel_rawPos, .after=everything())
+    rowid_to_column(var="ObsLevel_rawPos") %>%
+    relocate(ObsLevel_rawPos, .after=everything())
 
   for(i in numRE:1){
     thisREname <- paste0("RE",i)
@@ -289,7 +369,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     names(theseGroups_subset2)[which(names(theseGroups_subset2)=="thisRE_raw")] <- paste0(thisREname, "_rawPos")
   }
   theseGroups_subset3 <- theseGroups_subset2
-  rawColIdx <- rev(which(stringr::str_ends(names(theseGroups_subset2),"rawPos")))
+  rawColIdx <- rev(which(str_ends(names(theseGroups_subset2),"rawPos")))
 
   for(i in rawColIdx){
     thisColName <- names(theseGroups_subset3)[i]
@@ -302,12 +382,12 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
       theseGroups_subset3$newCol <- thisCol + maxNextCol
     }
 
-    names(theseGroups_subset3)[which(names(theseGroups_subset3)=="newCol")] <- paste0(stringr::str_remove(thisColName,"rawPos"),"edgePos")
+    names(theseGroups_subset3)[which(names(theseGroups_subset3)=="newCol")] <- paste0(str_remove(thisColName,"rawPos"),"edgePos")
   }
 
   theseGroups_subset3_clean <- theseGroups_subset3 %>%
-    dplyr::select(-ends_with("rawPos")) %>%
-    dplyr::as_tibble()
+    select(-ends_with("rawPos")) %>%
+    as_tibble()
 
   n_levels <- c()
   for(i in 1:(numRE+1)){
@@ -342,28 +422,28 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     names(nested_df)[which(names(nested_df)==thisName)] <- "thisName"
     suppressMessages(
       rowRange <- nested_df %>%
-        dplyr::group_by(thisName) %>%
-        dplyr::summarize(rowVal = mean(cur_group_rows())) %>%
-        dplyr::arrange(rowVal) %>%
-        dplyr::left_join(nested_df %>% dplyr::select(thisName, actName),
-                         multiple="first")
+      group_by(thisName) %>%
+      summarize(rowVal = mean(cur_group_rows())) %>%
+      arrange(rowVal) %>%
+      left_join(nested_df %>% select(thisName, actName),
+                multiple="first")
       )
 
     names(nested_df)[which(names(nested_df)=="thisName")] <- paste0("Nested",i)
 
     grp_lng_lme_model <- grp_lng_lme_model %>%
-      dplyr::bind_rows(data.frame(name=rep(thisName, endPosVal),
-                                  label=rowRange$actName,
-                                  x_pos=rep((i*2-1), endPosVal),
-                                  y_pos=rowRange$rowVal))
+      bind_rows(data.frame(name=rep(thisName, endPosVal),
+                           label=rowRange$actName,
+                           x_pos=rep((i*2-1), endPosVal),
+                           y_pos=rowRange$rowVal))
     if(i == 1){
       reNames_nested[i] <- names(lme_model$groups)[1]
-      reNames_nested_wSize[i] <- paste0(reNames_nested[i], "\nNum.=", lme_model$dims$ngrps[[numRE]])
+      reNames_nested_wSize[i] <- paste0(reNames_nested[i],"\nNum.=",lme_model$dims$ngrps[[numRE]])
     } else if(i == length(names_list)){
       reNames_nested[i] <- "Observation Error"
-      reNames_nested_wSize[i] <- paste0(reNames_nested[i], "\nNum.=", lme_model$dims$N)
+      reNames_nested_wSize[i] <- paste0(reNames_nested[i],"\nNum.=",lme_model$dims$N)
     } else{
-      ngrpsCol <- which(names(lme_model$dims$ngrps) == names(lme_model$groups)[i])
+      ngrpsCol <- which(names(lme_model$dims$ngrps)==names(lme_model$groups)[i])
       reNames_nested[i] <- paste(names(lme_model$groups)[i], "in", reNames_nested[i-1])
       reNames_nested_wSize[i] <- paste0(reNames_nested[i],"\nNum.=", lme_model$dims$ngrps[[ngrpsCol]])
     }
@@ -371,16 +451,16 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
 
   if(includeSizes){
     grp_lng_lme_model <- grp_lng_lme_model %>%
-      dplyr::bind_rows(data.frame(name=rep("RE Label", numRE+1),
-                                  label=reNames_nested_wSize,
-                                  x_pos=seq(from=1, to=numRE*2+1,by=2),
-                                  y_pos=max(grp_lng_lme_model$y_pos)+2))
+      bind_rows(data.frame(name=rep("RE Label", numRE+1),
+                           label=reNames_nested_wSize,
+                           x_pos=seq(from=1, to=numRE*2+1,by=2),
+                           y_pos=max(grp_lng_lme_model$y_pos)+2))
   } else{
     grp_lng_lme_model <- grp_lng_lme_model %>%
-      dplyr::bind_rows(data.frame(name=rep("RE Label", numRE+1),
-                                  label=reNames_nested,
-                                  x_pos=seq(from=1, to=numRE*2+1,by=2),
-                                  y_pos=max(grp_lng_lme_model$y_pos)+2))
+      bind_rows(data.frame(name=rep("RE Label", numRE+1),
+                           label=reNames_nested,
+                           x_pos=seq(from=1, to=numRE*2+1,by=2),
+                           y_pos=max(grp_lng_lme_model$y_pos)+2))
   }
 
 
@@ -415,11 +495,38 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
   fixedPlaceholders[is.na(fixedPlaceholders)] <- ""
 
   grp_lng_lme_model <- grp_lng_lme_model %>%
-    bind_rows(data.frame(name = rep("Fixed Label", numRE+1),
-                         label = fixedPlaceholders,
-                         x_pos = seq(from = 1, to = numRE*2+1, by = 2),
-                         y_pos = max(grp_lng_lme_model$y_pos) - 1))
+    bind_rows(data.frame(name=rep("Fixed Label", numRE+1),
+                         label=fixedPlaceholders,
+                         x_pos=seq(from=1, to=numRE*2+1,by=2),
+                         y_pos=max(grp_lng_lme_model$y_pos) - 1))
 
+  labelOffset <- 0
+  topOnlyTwoLevels <- FALSE
+  numTopRELevels <- 3
+  if(includeLabels){
+    grp_lng_lme_model$x_pos <- grp_lng_lme_model$x_pos + 1
+    get_y_pos <- grp_lng_lme_model %>%
+      filter(name=="RE1" & label=="...") %>%
+      select(y_pos) %>%
+      pull()
+    if(length(get_y_pos)==0){
+      get_y_pos <- grp_lng_lme_model %>%
+        filter(name=="RE1") %>%
+        summarize(meanVal = mean(y_pos)) %>%
+        select(meanVal) %>%
+        pull()
+      topOnlyTwoLevels <- TRUE
+      numTopRELevels <- 2
+    }
+    grp_lng_lme_model <- grp_lng_lme_model %>%
+      bind_rows(data.frame(name=rep("Diagram Label", 3),
+                           label=c("Measurement\nDiagram", "Fixed", "Random"),
+                           x_pos=1,
+                           y_pos=c(get_y_pos,
+                                   max(grp_lng_lme_model$y_pos) - 1,
+                                   max(grp_lng_lme_model$y_pos))))
+    labelOffset <- 3
+  }
   # if("extrafont" %in% rownames(installed.packages())){
   #   do.call('library', list("extrafont"))
   #   useFontName = "Times New Roman Bold"
@@ -427,23 +534,74 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
   #   useFontName = "Arial"
   # }
   useFontName = "Arial"
-  suppressMessages(
-    nodes_lme_model <- DiagrammeR::create_node_df(
-      n = nrow(grp_lng_lme_model),
-      type="a",
-      label = grp_lng_lme_model$label,
-      style="filled",
-      color="aqua",
-      fontname=useFontName,
-      fontcolor="black",
-      shape=c(rep("circle",3), # First RE will always have three circles for first, middle, and last
-              rep("circle",nrow(grp_lng_lme_model)-(3+2*(numRE+1))), # will always subtract 9
-              rep("box",2*(numRE+1))), # 2*numRE boxes on the top for the random effect labels and fixed effect boxes
-      DiagrammeR::node_aes(
-        x=grp_lng_lme_model$x_pos,
-        y=grp_lng_lme_model$y_pos,
-        fixedsize = FALSE))
-  )
+  if(includeLabels){
+    suppressMessages(
+      nodes_lme_model <- create_node_df(
+        n = nrow(grp_lng_lme_model),
+        type="a",
+        label = grp_lng_lme_model$label,
+        style="filled",
+        color=c(rep(nodeColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                rep(nodeColors$diagram,nrow(grp_lng_lme_model) -
+                      (numTopRELevels+2*(numRE+1))-labelOffset),
+                rep(nodeColors$random,numRE+1),
+                rep(nodeColors$fixed,numRE+1),
+                nodeColors$diagram,nodeColors$fixed,nodeColors$random),
+        fillcolor=c(rep(nodeFillColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                    rep(nodeFillColors$diagram,nrow(grp_lng_lme_model) -
+                          (numTopRELevels+2*(numRE+1))-labelOffset),
+                    rep(nodeFillColors$random,numRE+1),
+                    rep(nodeFillColors$fixed,numRE+1),
+                    nodeFillColors$diagram,nodeFillColors$fixed,nodeFillColors$random),
+        fontname=useFontName,
+        fontcolor=c(rep(nodeFontColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                    rep(nodeFontColors$diagram,nrow(grp_lng_lme_model) -
+                          (numTopRELevels+2*(numRE+1))-labelOffset),
+                    rep(nodeFontColors$random,numRE+1),
+                    rep(nodeFontColors$fixed,numRE+1),
+                    nodeFontColors$diagram,nodeFontColors$fixed,nodeFontColors$random),
+        shape=c(rep("circle", numTopRELevels), # First RE will always have three circles for first, middle, and last
+                rep("circle",nrow(grp_lng_lme_model) -
+                      (numTopRELevels+2*(numRE+1))-labelOffset),
+                rep("box",2*(numRE+1) + labelOffset )), # 2*numRE boxes on the top for the random effect labels and fixed effect boxes
+        node_aes(
+          x=grp_lng_lme_model$x_pos,
+          y=grp_lng_lme_model$y_pos,
+          fixedsize = FALSE))
+    )
+  } else{
+    suppressMessages(
+      nodes_lme_model <- create_node_df(
+        n = nrow(grp_lng_lme_model),
+        type="a",
+        label = grp_lng_lme_model$label,
+        style="filled",
+        color=c(rep(nodeColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                rep(nodeColors$diagram,nrow(grp_lng_lme_model) -
+                      (numTopRELevels+2*(numRE+1))-labelOffset),
+                rep(nodeColors$random,numRE+1),
+                rep(nodeColors$fixed,numRE+1)),
+        fillcolor=c(rep(nodeFillColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                    rep(nodeFillColors$diagram,nrow(grp_lng_lme_model) -
+                          (numTopRELevels+2*(numRE+1))-labelOffset),
+                    rep(nodeFillColors$random,numRE+1),
+                    rep(nodeFillColors$fixed,numRE+1)),
+        fontname=useFontName,
+        fontcolor=c(rep(nodeFontColors$diagram, numTopRELevels), # First RE will always have three circles for first, middle, and last
+                    rep(nodeFontColors$diagram,nrow(grp_lng_lme_model) -
+                          (numTopRELevels+2*(numRE+1))-labelOffset),
+                    rep(nodeFontColors$random,numRE+1),
+                    rep(nodeFontColors$fixed,numRE+1)),
+        shape=c(rep("circle", numTopRELevels), # First RE will always have three circles for first, middle, and last
+                rep("circle",nrow(grp_lng_lme_model) -
+                      (numTopRELevels+2*(numRE+1))-labelOffset),
+                rep("box",2*(numRE+1) + labelOffset)), # 2*numRE boxes on the top for the random effect labels and fixed effect boxes
+        node_aes(
+          x=grp_lng_lme_model$x_pos,
+          y=grp_lng_lme_model$y_pos,
+          fixedsize = FALSE))
+    )
+  }
 
   setNames <- paste0("Set", 1:numRE)
   groupSets <- list(rep(list(), numRE))
@@ -453,7 +611,7 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
     names_edgePos <- names(theseGroups_subset3_clean)[which(names(theseGroups_subset3_clean) %in% paste0(namesRE, "_edgePos"))]
     groups_subset <- theseGroups_subset3_clean[,c(namesRE, names_edgePos)] %>%
       unique() %>%
-      dplyr::rename(fromLabel=!!namesRE[1],
+      rename(fromLabel=!!namesRE[1],
              toLabel=!!namesRE[2],
              fromPos=!!names_edgePos[1],
              toPos=!!names_edgePos[2])
@@ -471,23 +629,23 @@ model_diagram <- function(this_model, this_file_path = NULL, this_file_type = "P
 
 
   edges_lme_model <-
-    DiagrammeR::create_edge_df(
+    create_edge_df(
       from = group_edges_df$fromPos,
       to = group_edges_df$toPos,
       rel = "requires",
       color = "black")
-  graph_lme_model <- DiagrammeR::create_graph(nodes_df=nodes_lme_model,
-                                              edges_df=edges_lme_model)
+  graph_lme_model <- create_graph(nodes_df=nodes_lme_model,
+                                  edges_df=edges_lme_model)
   if(!is.null(this_file_path)){
     suppressWarnings(
       graph_lme_model %>%
-        DiagrammeR::export_graph(file_name = this_file_path,
-                                 file_type = this_file_type,
-                                 width=widthVal,height=heightVal)
+        export_graph(file_name = this_file_path,
+                     file_type = this_file_type,
+                     width=widthVal,height=heightVal)
     )
   }
   graph_lme_model %>%
-    DiagrammeR::render_graph(width=widthVal,height=heightVal,
+      render_graph(width=widthVal,height=heightVal,
                    output="graph", as_svg=TRUE)
 
 }
@@ -566,9 +724,9 @@ getFixLevel <- function(lme_model, fixedCall, randomCall){
 
 
 
-  random <- nlme::reStruct(formula(random), data = NULL)
-  reSt <- nlme::reStruct(random, REML = REML, data = NULL)
-  groups <- nlme::getGroupsFormula(reSt)
+  random <- reStruct(formula(random), data = NULL)
+  reSt <- reStruct(random, REML = REML, data = NULL)
+  groups <- getGroupsFormula(reSt)
 
   correlation <- NULL
 
@@ -578,12 +736,12 @@ getFixLevel <- function(lme_model, fixedCall, randomCall){
   corQ <- lmeQ <- 1
 
   ## create an lme structure containing the random effects model and plug-ins
-  lmeSt <- nlme::lmeStruct(reStruct = reSt, corStruct = correlation,
-                           varStruct = varFunc(weights))
+  lmeSt <- lmeStruct(reStruct = reSt, corStruct = correlation,
+                     varStruct = varFunc(weights))
 
   ## extract a data frame with enough information to evaluate
   ## fixed, groups, reStruct, corStruct, and varStruct
-  mfArgs <- list(formula = nlme::asOneFormula(formula(lmeSt), fixed, groups),
+  mfArgs <- list(formula = asOneFormula(formula(lmeSt), fixed, groups),
                  data = data, na.action = na.action)
 
   mfArgs$drop.unused.levels <- TRUE
@@ -611,8 +769,8 @@ getFixLevel <- function(lme_model, fixedCall, randomCall){
   }
   if (corQ > lmeQ) {
     ## may have to reorder by the correlation groups
-    ord <- do.call(order, nlme::getGroups(dataMix,
-                                          nlme::getGroupsFormula(correlation)))
+    ord <- do.call(order, getGroups(dataMix,
+                                    getGroupsFormula(correlation)))
   }
   grps <- grps[ord, , drop = FALSE]
   dataMix <- dataMix[ord, ,drop = FALSE]
@@ -622,7 +780,7 @@ getFixLevel <- function(lme_model, fixedCall, randomCall){
   N <- nrow(grps)
   Z <- model.matrix(reSt, dataMix)      # stores contrasts in matrix form
   ncols <- attr(Z, "ncols")
-  nlme::Names(lmeSt$reStruct) <- attr(Z, "nams")
+  Names(lmeSt$reStruct) <- attr(Z, "nams")
   ## keeping the contrasts for later use in predict
   contr <- attr(Z, "contr")
   X <- model.frame(fixed, dataMix)
@@ -851,4 +1009,75 @@ inner_perc_table_R <- function(X, grps, p = NULL, Q = NULL){
 
   return(pTable)
 
+}
+#' Diagram elements
+#'
+#' @description
+#' Similar to \link{ggplot2}'s \link{theme} system, the `md_` functions
+#' specify the display of how the node components of the diagram are drawn.
+#'
+#'   - `md_color()`: border of the node.
+#'   - `md_fill()`: fill color of the node.
+#'   - `md_fontColor()`: font color of the text in the nodes.
+#'
+#'
+#' @param diagram Specifies the outline color, fill color, or font color
+#'    for the elements in the measurement diagram circles (hierarchical diagram).
+#'    Default is `"gray25"` for ([md_color()]), `"aliceblue"` for ([md_fill()]),
+#'    and `"black"` for ([md_fontColor()]).
+#' @param random Specifies the outline color, fill color, or font color
+#'    for the elements in the random effect variable boxes.
+#'    Default is `"gray25"` for ([md_color()]), `"aliceblue"` for ([md_fill()]),
+#'    and `"black"` for ([md_fontColor()]).
+#' @param fixed Specifies the outline color, fill color, or font color
+#'    for the elements in the fixed effect variable boxes.
+#'    Default is `"gray25"` for ([md_color()]), `"darkseagreen1"` for ([md_fill()]),
+#'    and `"black"` for ([md_fontColor()]).
+#'
+#' @examples
+#' library(tidyverse)
+#' library(DiagrammeR)
+#' # merMod object example
+#' library(lme4)
+#' library(nlme)
+#'
+#' sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' summary(sleepstudy_lmer)
+#' model_diagram(sleepstudy_lmer,
+#'   nodeColors = md_color(diagram="steelblue", random="steelblue", fixed="darkolivegreen1"),
+#'   nodeFillColors = md_fill(diagram="aliceblue", random="aliceblue", fixed="darkseagreen1"),
+#'   nodeFontColors = md_fontColor(diagram="black", random="blue", fixed="black"))
+#'
+#' @name md
+#' @aliases NULL
+NULL
+
+#' @export
+#' @rdname md
+md_color <- function(diagram="gray25", random="gray25", fixed="gray25") {
+
+  structure(
+    list(diagram = diagram, random=random, fixed=fixed),
+    class = c("md_color", "md")
+  )
+}
+
+#' @export
+#' @rdname md
+md_fill <- function(diagram="aliceblue", random="aliceblue", fixed="darkseagreen1") {
+
+  structure(
+    list(diagram = diagram, random=random, fixed=fixed),
+    class = c("md_color", "md")
+  )
+}
+
+#' @export
+#' @rdname md
+md_fontColor <- function(diagram="black", random="black", fixed="black") {
+
+  structure(
+    list(diagram = diagram, random=random, fixed=fixed),
+    class = c("md_color", "md")
+  )
 }

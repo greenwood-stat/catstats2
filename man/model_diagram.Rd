@@ -10,7 +10,12 @@ model_diagram(
   this_file_type = "PNG",
   widthVal = 800,
   heightVal = 1600,
-  includeSizes = TRUE
+  includeSizes = TRUE,
+  includeLabels = TRUE,
+  nodeColors = md_color(diagram = "gray25", random = "gray25", fixed = "gray25"),
+  nodeFillColors = md_fill(diagram = "aliceblue", random = "aliceblue", fixed =
+    "darkseagreen1"),
+  nodeFontColors = md_fontColor(diagram = "black", random = "black", fixed = "black")
 )
 }
 \arguments{
@@ -29,6 +34,21 @@ Default is \code{"PNG"}.}
 
 \item{includeSizes}{Optional. Include group sizes in random effect labels.
 Default is \code{TRUE}.}
+
+\item{includeLabels}{Optional. Include labels for the model diagram components.
+Default is \code{TRUE}.}
+
+\item{nodeColors}{Optional. Function specifying the colors (\code{\link[=md_color]{md_color()}})
+for the outline of the nodes. Components can be specified individually
+(\code{diagram}, \code{random}, and \code{fixed}).}
+
+\item{nodeFillColors}{Optional. Function specifying the colors (\code{\link[=md_fill]{md_fill()}})
+for the fill color of the nodes. Components can be specified individually
+(\code{diagram}, \code{random}, and \code{fixed}).}
+
+\item{nodeFontColors}{Optional. Function specifying the colors (\code{\link[=md_fontColor]{md_fontColor()}})
+for the font color of text in the nodes. Components can be specified
+individually (\code{diagram}, \code{random}, and \code{fixed}).}
 }
 \value{
 A DiagrammeR object.
@@ -37,20 +57,35 @@ A DiagrammeR object.
 \code{model_diagram()} takes a hierarchical nested model and returns a DiagrammeR
 object visualizing the fixed and random effects structure.
 }
+\details{
+NOTE: When including this function in an RMD document and knitting to PDF, the
+graphic size variables \code{widthVal} and \code{heightVal} do not currently work. It is
+recommended that instead the image is exported to a file such as a PDF and then
+reimported to the document. See the examples below.
+}
 \examples{
- library(tidyverse)
- library(DiagrammeR)
-## merMod object example
- library(lme4)
- library(nlme)
+library(tidyverse)
+library(DiagrammeR)
+# merMod object example
+library(lme4)
+library(nlme)
 
-sleepstudy_lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+sleepstudy_lmer <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 summary(sleepstudy_lmer)
 model_diagram(sleepstudy_lmer)
 
 # lme object example
 
-sleepstudy_lme <- nlme::lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
+sleepstudy_lme <- lme(Reaction ~ Days, random=~Days|Subject, data=sleepstudy)
 summary(sleepstudy_lme)
 model_diagram(sleepstudy_lme)
+
+# Knitting to PDF example - Don't run
+\dontrun{
+model_diagram(sleepstudy_lmer,
+              this_file_path="sleepstudy_lmer_modeldiagram.PDF",
+              this_file_type="PDF")
+knitr::include_graphics("sleepstudy_lmer_modeldiagram.PDF")
+              }
+
 }
