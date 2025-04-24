@@ -40,6 +40,7 @@ Imports:
     ggrepel,
     cetcolor,
     DiagrammeR,
+    DiagrammeRsvg,
     forcats,
     gtools
 Suggests:
