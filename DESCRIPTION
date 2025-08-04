@@ -1,6 +1,6 @@
 Package: catstats2
 Title: Upper Level Statistics for Montana State University Bobcats
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     person(given = "Mark",
            family = "Greenwood",

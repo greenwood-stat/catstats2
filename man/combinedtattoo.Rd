@@ -20,7 +20,7 @@ a \code{data.frame} with 20 observations on 10 variables from 10 subjects:
 }
 }
 \source{
-Digitized version of published Figures 1 and 2 combined with Tabel 1 (does not exactly match published numerical summaries!)
+Digitized version of published Figures 1 and 2 combined with Table 1 (does not exactly match published numerical summaries!)
 }
 \usage{
 combinedtattoo
@@ -38,25 +38,35 @@ based on the information in a plot and in a separate table
 }
 \examples{
 library(ggthemes)
-library(tidyverse)
-combinedtattoo <- combinedtattto \%>\% mutate(SubjectF = factor(Subject))
-p1 <- combinedtattoo \%>\% ggplot(aes(x = Tat_not, y = SweatRate, group = SubjectF)) +
-  geom_line(aes(color = SubjectF)) +
-  scale_color_viridis_d(end = 0.8)
-p2 <- combinedtattoo \%>\% ggplot(aes(x = Tat_not, y = Na_conc, group = SubjectF)) +
-  geom_line(aes(color = SubjectF)) +
-  scale_color_viridis_d(end = 0.8)
-p <- combinedtattoo \%>\% ggplot(aes(x = Weight_kg, y = SweatRate)) +
-  geom_point(aes(color = Subject)) +
-  scale_color_viridis_c(end = 0.8) +
-  geom_smooth(method = "lm") +
-  facet_wrap(~Tat_not)
+library(dplyr)
+library(ggplot2)
+library(viridis)
+combinedtattoo <- combinedtattoo \%>\%
+  mutate(SubjectF = factor(Subject))
+p1 <- combinedtattoo \%>\%
+  ggplot(aes(x = Tat_not, y = SweatRate, group = SubjectF)) +
+    geom_line(aes(color = SubjectF)) +
+    scale_color_viridis_d(end = 0.8)
+p2 <- combinedtattoo \%>\%
+  ggplot(aes(x = Tat_not, y = Na_conc, group = SubjectF)) +
+    geom_line(aes(color = SubjectF)) +
+    scale_color_viridis_d(end = 0.8)
+p3 <- combinedtattoo \%>\%
+  ggplot(aes(x = Weight_kg, y = SweatRate)) +
+    geom_point(aes(color = Subject)) +
+    scale_color_viridis_c(end = 0.8) +
+    geom_smooth(method = "lm") +
+    facet_wrap(~Tat_not)
+
 library(patchwork)
 (p1 + p2) / (p3)
+
 library(lmerTest)
-lmer1 <- lmer(SweatRate ~ Tat_not + (1|Subject), data = combinedtattoo)
+lmer1 <- lmer(SweatRate ~ Tat_not + (1|Subject),
+              data = combinedtattoo)
 summary(lmer1)
-lmerFL <- lmer(SweatRate ~ Tat_not*Weight_kg + (1|Subject), data = combinedtattoo)
+lmerFL <- lmer(SweatRate ~ Tat_not*Weight_kg + (1|Subject),
+               data = combinedtattoo)
 summary(lmerFL)
 }
 \references{

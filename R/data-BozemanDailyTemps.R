@@ -29,14 +29,15 @@
 #' @keywords data snow temperature elevation
 #' @examples
 #' library(tidyverse)
+#' library(lubridate)
 #' BozemanDailyTemps <- BozemanDailyTemps %>% mutate(
 #'   Year = year(DATE_correct),
 #'   Month = month(DATE_correct),
-#'   Year.Month = interaction(Year, Month))
+#'   Year.Month = str_c(Year, Month))
 #'
 #'   BozemanDailyTemps_Monthlyagg <- BozemanDailyTemps %>%
 #'   group_by(Year, Month) %>%
-#'   summarise(MonthlyMeanMaxTemp = mean(TMAX),
+#'   dplyr::summarise(MonthlyMeanMaxTemp = mean(TMAX),
 #'               MonthlyMeanMinTemp = mean(TMIN),
 #'               TotalMonthlyPrecip = sum(PRCP),
 #'               TotalMonthlySnow = sum(SNOW),
@@ -52,7 +53,7 @@
 #' BozemanMonthlyAgg <- BozemanDailyTemps_Monthlyagg %>% filter(CountofDays > 20) #Only keep months with more than 20 observations available
 #' BozemanYearlyAgg <- BozemanMonthlyAgg %>%
 #'   group_by(Year) %>%
-#'   summarise(YearlyMeanMaxTemp = mean(MonthlyMeanMaxTemp),
+#'   dplyr::summarise(YearlyMeanMaxTemp = mean(MonthlyMeanMaxTemp),
 #'               YearlyMeanMinTemp = mean(MonthlyMeanMinTemp),
 #'               TotalYearlyPrecip = sum(TotalMonthlyPrecip),
 #'               TotalYearlySnow = sum(TotalMonthlySnow),
