@@ -13,7 +13,10 @@ enhanced_stripchart(
   ptalpha = 0.3,
   jitterwidth = 0.1,
   jitterheight = 0,
-  ylab = NULL
+  ylab = NULL,
+  xangle = 45,
+  xvjust = 1,
+  xhjust = 1
 )
 }
 \arguments{
@@ -30,6 +33,12 @@ enhanced_stripchart(
 \item{jitterwidth}{control jitter amount in horizontal, defaults to 0.1}
 
 \item{jitterheight}{control jitter amount in vertical, defaults to 0}
+
+\item{xangle}{angle for text on x-axis, defaults to 45}
+
+\item{xvjust}{vertical location for the x-axis text, defaults to 1}
+
+\item{xhjust}{horizontal location for the x-axis text, defaults to 1}
 
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }

@@ -13,6 +13,9 @@
 #' @param ptalpha alpha value for the points, set to 0 to hide points and just view means, CIs, and violins
 #' @param jitterwidth control jitter amount in horizontal, defaults to 0.1
 #' @param jitterheight control jitter amount in vertical, defaults to 0
+#' @param xangle angle for text on x-axis, defaults to 45
+#' @param xvjust vertical location for the x-axis text, defaults to 1
+#' @param xhjust horizontal location for the x-axis text, defaults to 1
 #'
 #' @details Function for making enhanced stripcharts with means and confidence intervals for each combination of groups.
 #' @examples
@@ -29,7 +32,8 @@
 #' @export
 enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
                                  conf.level=.95, .drop=TRUE, ptalpha = 0.3,
-                                 jitterwidth = 0.1, jitterheight = 0, ylab = NULL)
+                                 jitterwidth = 0.1, jitterheight = 0, ylab = NULL,
+                                 xangle = 45, xvjust = 1, xhjust = 1)
 {
   #Function to generate pirateplot-ish plot using ggplot
 
@@ -88,7 +92,9 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
     theme_bw() +
     scale_color_viridis_d(end = 0.8, option = "E") +
     scale_fill_viridis_d(end = 0.8, option = "E") +
-    labs(title = paste0("Enhanced stripchart of ", measurevar, " by ", groupvars))
+    labs(title = paste0("Enhanced stripchart of ", measurevar, " by ", groupvars)) +
+    theme(axis.text.x = element_text(angle = xangle, vjust = xvjust, hjust = xhjust)) +
+    theme(legend.position = "none")
 
   return(plot1)
 

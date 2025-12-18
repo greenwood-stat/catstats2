@@ -24,7 +24,7 @@
 #' options(na.action = "na.fail")
 #' dd <- dredge(m1, rank = "BIC")
 #' g1 <- ggdredgeplot(data = dd) + labs(title = "BIC results for all models")
-#' g2 <- ggdredgeplot(data = dd, deltasubset = )
+#' g2 <- ggdredgeplot(data = dd, deltasubset = 8)
 #' library(patchwork)
 #' g1 / g2 + plot_annotation((tag_levels = "a"))
 #' @export
@@ -57,12 +57,11 @@ ggdredgeplot <- function(data,
                        direction = "y",
                        max.overlaps = max.overlaps,
                        show.legend = FALSE) +
-      theme(axis.ticks.y = element_blank(),
-            axis.text.y = element_blank()) +
       labs(y = "", x = name,
            title = "Plot of Delta IC values") +
       scale_color_manual(values = colors, name = name) +
-      theme_bw()
+      theme_bw() +
+      theme(axis.text.y = element_blank())
 
     return(gplot)
   }

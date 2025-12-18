@@ -14,6 +14,9 @@
 #' and main effects and all 2-way interactions (array = T)
 #' @param jitter.width control jitter of points horizontally in the main effects, defaults to null to use geom_jitter defaults
 #' @param jitter.height control jitter of points vertically in the main effects, defaults to 0 jitter vertically so actual values of responses are shown
+#' @param xangle angle for text on x-axis, defaults to 45
+#' @param xvjust vertical location for the x-axis text, defaults to 1
+#' @param xhjust horizontal location for the x-axis text, defaults to 1
 #'
 #' @details Function for making nice looking interaction plot (both versions) with observations and 95% confidence intervals for each combination of groups.
 #' @examples
@@ -31,7 +34,8 @@
 #' @export
 ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FALSE,
                         conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3, ylim_manual = NULL,
-                       jitter.width = NULL, jitter.height = 0)
+                       jitter.width = NULL, jitter.height = 0, xangle = 45,
+                       xvjust = 1, xhjust = 1)
 {
   #Function to generate a plot array that have pirateplot-ish plots in off diagonals with single explanatory variables
   #Diagonals contain the intplots made both ways... and return as ggplot
@@ -95,7 +99,9 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.8, option = "E") +
       scale_fill_viridis_d(end = 0.8, option = "E") +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust)) +
+      theme(legend.position = "none")
 
   }
 
@@ -110,7 +116,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.8, option = "C") +
       scale_fill_viridis_d(end = 0.8, option = "C") +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     summaryinfo_LL <- summarySE(data = data, measurevar = response, groupvars = groupvars[[1]], na.rm = na.rm, conf.level = conf.level)
 
@@ -125,7 +132,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plotLR <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -136,7 +144,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = 1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     summaryinfo_UR <- summarySE(data = data, measurevar = response, groupvars = groupvars[[2]], na.rm = na.rm, conf.level = conf.level)
 
@@ -150,7 +159,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.8, option = "C") +
       scale_fill_viridis_d(end = 0.8, option = "C") +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
 
     plot1 <- ggarrange(plotUL, plotUR, plotLL, plotLR, nrow = 2, ncol = 2, align = "v")
@@ -171,7 +181,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       scale_color_viridis_d(end = 0.8, option = "E") +
       scale_fill_viridis_d(end = 0.8, option = "E") +
       labs(title = paste0("Two-way interaction of ", groupvars[[1]], " and ", groupvars[[2]])) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
 
   }
@@ -198,7 +209,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot22 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3) +
@@ -210,7 +222,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.9, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.9, option = "C", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
 
     plot33 <- data %>% ggplot() +
@@ -223,7 +236,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot12 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3, position = pd) +
@@ -234,7 +248,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.8, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.8, option = "C", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot13 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[1]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = 0.3, position = pd) +
@@ -245,7 +260,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot31 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -256,7 +272,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot21 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[1]]]), alpha = 0.3, position = pd) +
@@ -267,7 +284,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "A", direction = -1) +
       scale_fill_viridis_d(end = 0.7, option = "A", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot23 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[2]]], y = .data[[response]], color = .data[[groupvars[3]]]), alpha = 0.3, position = pd) +
@@ -278,7 +296,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.7, option = "H", direction = 1) +
       scale_fill_viridis_d(end = 0.7, option = "H", direction = 1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot32 <- data %>% ggplot() +
       geom_violin(aes(x = .data[[groupvars[3]]], y = .data[[response]], color = .data[[groupvars[2]]]), alpha = 0.3, position = pd) +
@@ -289,7 +308,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme_bw() +
       scale_color_viridis_d(end = 0.8, option = "C", direction = -1) +
       scale_fill_viridis_d(end = 0.8, option = "C", direction = -1) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
     plot1 <- ggarrange(plot11, plot21, plot31, plot12,  plot22, plot32, plot13,  plot23 , plot33, nrow = 3, ncol = 3, align = "v")
     plot1 <- annotate_figure(plot1,
@@ -310,7 +330,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       scale_fill_viridis_d(end = 0.8, option = "C") +
       facet_wrap(~.data[[groupvars[3]]]) +
       labs(title = paste0("Three-way interaction of ", groupvars[[1]], ", ", groupvars[[2]], ", and ", groupvars[[3]])) +
-      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2]))
+      coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
+      theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
 
   }

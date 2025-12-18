@@ -16,7 +16,10 @@ ggintplot(
   ptalpha = 0.3,
   ylim_manual = NULL,
   jitter.width = NULL,
-  jitter.height = 0
+  jitter.height = 0,
+  xangle = 45,
+  xvjust = 1,
+  xhjust = 1
 )
 }
 \arguments{
@@ -38,6 +41,12 @@ and main effects and all 2-way interactions (array = T)}
 \item{jitter.width}{control jitter of points horizontally in the main effects, defaults to null to use geom_jitter defaults}
 
 \item{jitter.height}{control jitter of points vertically in the main effects, defaults to 0 jitter vertically so actual values of responses are shown}
+
+\item{xangle}{angle for text on x-axis, defaults to 45}
+
+\item{xvjust}{vertical location for the x-axis text, defaults to 1}
+
+\item{xhjust}{horizontal location for the x-axis text, defaults to 1}
 
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }
