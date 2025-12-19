@@ -32,6 +32,7 @@ library(dplyr)
 library(ggplot2)
 library(janitor)
 library(lmerTest)
+library(tidyr)
 data(PostControl)
 AreaLong <- PostControl \%>\% dplyr::select(1:8, 27) \%>\% pivot_longer(cols = 2:8,
                                             names_to = "TestCondition",
