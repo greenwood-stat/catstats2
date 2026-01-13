@@ -93,7 +93,7 @@ TimeofDay = factor(case_when(
   Hour \%in\% c(7:9) ~ "Morning",
   Hour \%in\% c(10:14) ~ "Middle")),
 datef = factor(date)) \%>\%
-  rename(passdist = "passing distance")
+  dplyr::rename(passdist = "passing distance")
 
 table(w2007$helmet, w2007$kerb)
 
