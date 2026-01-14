@@ -19,7 +19,8 @@ ggintplot(
   jitter.height = 0,
   xangle = 45,
   xvjust = 1,
-  xhjust = 1
+  xhjust = 1,
+  labels = "auto"
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ and main effects and all 2-way interactions (array = T)}
 
 \item{xhjust}{horizontal location for the x-axis text, defaults to 1}
 
+\item{labels}{options for ggarrange panel labeling, defaults to "auto", with "none" or "AUTO" as other options}
+
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }
 \description{
@@ -55,7 +58,7 @@ This function allows you to generate interaction plots for a Two-Way ANOVA
 with error bars with an array of plots and main effect type plots with faceting.
 }
 \details{
-Function for making nice looking interaction plot (both versions) with observations and 95\% confidence intervals for each combination of groups.
+Function for making nice looking interaction plot (both versions) with observations and 95\% t-based confidence intervals for each combination of groups.
 }
 \examples{
 # must have the carData package installed

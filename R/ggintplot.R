@@ -17,8 +17,9 @@
 #' @param xangle angle for text on x-axis, defaults to 45
 #' @param xvjust vertical location for the x-axis text, defaults to 1
 #' @param xhjust horizontal location for the x-axis text, defaults to 1
+#' @param labels options for ggarrange panel labeling, defaults to "auto", with "none" or "AUTO" as other options
 #'
-#' @details Function for making nice looking interaction plot (both versions) with observations and 95% confidence intervals for each combination of groups.
+#' @details Function for making nice looking interaction plot (both versions) with observations and 95% t-based confidence intervals for each combination of groups.
 #' @examples
 #' # must have the carData package installed
 #' data(TitanicSurvival, package = "carData")
@@ -35,7 +36,7 @@
 ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FALSE,
                         conf.level=.95, .drop=TRUE, pd = 0.1, array = T, ptalpha = 0.3, ylim_manual = NULL,
                        jitter.width = NULL, jitter.height = 0, xangle = 45,
-                       xvjust = 1, xhjust = 1)
+                       xvjust = 1, xhjust = 1, labels = "auto")
 {
   #Function to generate a plot array that have pirateplot-ish plots in off diagonals with single explanatory variables
   #Diagonals contain the intplots made both ways... and return as ggplot
@@ -163,7 +164,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
 
-    plot1 <- ggarrange(plotUL, plotUR, plotLL, plotLR, nrow = 2, ncol = 2, align = "v")
+    plot1 <- ggarrange(plotUL, plotUR, plotLL, plotLR, nrow = 2, ncol = 2, align = "v",
+                       labels = labels)
     plot1 <- annotate_figure(plot1,
                              top = text_grob(paste0("Two-way interaction of ", groupvars[[1]], " and ", groupvars[[2]])))
 
@@ -311,7 +313,8 @@ ggintplot <- function (data = NULL, response = NULL, groupvars = NULL, na.rm=FAL
       coord_cartesian(ylim = c(ylim_manual[1], ylim_manual[2])) +
       theme(axis.text.x = element_text(angle = xangle,  vjust = xvjust, hjust = xhjust))
 
-    plot1 <- ggarrange(plot11, plot21, plot31, plot12,  plot22, plot32, plot13,  plot23 , plot33, nrow = 3, ncol = 3, align = "v")
+    plot1 <- ggarrange(plot11, plot21, plot31, plot12,  plot22, plot32, plot13,  plot23 , plot33, nrow = 3, ncol = 3, align = "v",
+                       labels = labels)
     plot1 <- annotate_figure(plot1,
                              top = text_grob(paste0("All two-way interactions of ", groupvars[[1]], ", ", groupvars[[2]], ", and ", groupvars[[3]])))
 
