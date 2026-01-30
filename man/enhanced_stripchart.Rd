@@ -16,7 +16,10 @@ enhanced_stripchart(
   ylab = NULL,
   xangle = 45,
   xvjust = 1,
-  xhjust = 1
+  xhjust = 1,
+  CLD = F,
+  CLDvlocation = 0,
+  CLDcolor = "red"
 )
 }
 \arguments{
@@ -40,6 +43,12 @@ enhanced_stripchart(
 
 \item{xhjust}{horizontal location for the x-axis text, defaults to 1}
 
+\item{CLD}{Add compact letter display using Tukey's HSD, default is FALSE}
+
+\item{CLDvlocation}{yaxis value for CLD letters, default is 0.}
+
+\item{CLDcolor}{defaults to red for adding CLD letters}
+
 \item{conf.level:}{the proportion confidence level of the confidence interval (default is 0.95)}
 }
 \description{
@@ -48,7 +57,7 @@ This function allows you to use a formula interface to generate a plot much like
 \details{
 It checks for missing data, converts the x variable to a factor, checks for smaller group sizes, and generates frequentist intervals for each level of the factor provided.
 
-Function for making enhanced stripcharts with means and confidence intervals for each combination of groups.
+Function for making enhanced stripcharts with means and confidence intervals for each combination of groups. With option to add Tukey's HSD compact letter display.
 }
 \examples{
 # must have the carData package installed
@@ -56,8 +65,9 @@ data(TitanicSurvival, package = "carData")
 TitanicSurvival \%>\% enhanced_stripchart(age ~ passengerClass)
 data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
 enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
-  jitterwidth = 0.1, jitterheight = 0) +
+  jitterwidth = 0.1, jitterheight = 0, CLD = T) +
   labs(title = "Plot of odontoblast cell lengths \n by dosage level",
     x = "Dosage of vitamin C",
     y = "Cell length (microns)")
+
 }

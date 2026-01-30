@@ -16,24 +16,28 @@
 #' @param xangle angle for text on x-axis, defaults to 45
 #' @param xvjust vertical location for the x-axis text, defaults to 1
 #' @param xhjust horizontal location for the x-axis text, defaults to 1
+#' @param CLD Add compact letter display using Tukey's HSD, default is FALSE
+#' @param CLDvlocation yaxis value for CLD letters, default is 0.
+#' @param CLDcolor defaults to red for adding CLD letters
 #'
-#' @details Function for making enhanced stripcharts with means and confidence intervals for each combination of groups.
+#' @details Function for making enhanced stripcharts with means and confidence intervals for each combination of groups. With option to add Tukey's HSD compact letter display.
 #' @examples
 #' # must have the carData package installed
 #' data(TitanicSurvival, package = "carData")
 #' TitanicSurvival %>% enhanced_stripchart(age ~ passengerClass)
 #' data(ToothGrowth) #Quantitative predictor with 3 levels, converted to factor
 #' enhanced_stripchart(len ~ dose, data = ToothGrowth, ptalpha = 0.05,
-#'   jitterwidth = 0.1, jitterheight = 0) +
+#'   jitterwidth = 0.1, jitterheight = 0, CLD = T) +
 #'   labs(title = "Plot of odontoblast cell lengths \n by dosage level",
 #'     x = "Dosage of vitamin C",
 #'     y = "Cell length (microns)")
-
+#'
 #' @export
 enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
                                  conf.level=.95, .drop=TRUE, ptalpha = 0.3,
                                  jitterwidth = 0.1, jitterheight = 0, ylab = NULL,
-                                 xangle = 45, xvjust = 1, xhjust = 1)
+                                 xangle = 45, xvjust = 1, xhjust = 1,
+                                 CLD = F, CLDvlocation = 0, CLDcolor = "red")
 {
   #Function to generate pirateplot-ish plot using ggplot
 
@@ -95,6 +99,19 @@ enhanced_stripchart <- function (data = NULL, formula = NULL, na.rm = TRUE,
     labs(title = paste0("Enhanced stripchart of ", measurevar, " by ", groupvars)) +
     theme(axis.text.x = element_text(angle = xangle, vjust = xvjust, hjust = xhjust)) +
     theme(legend.position = "none")
+
+
+  if(CLD ==TRUE){
+    if(!require("emmeans")) stop("you need to install emmeans")
+    if(!require("multcomp")) stop("you need to install multcomp")
+    lm1 <- lm(formula, data = dataR)
+    lm_em <- emmeans(lm1, pairwise ~ ., adjust = "tukey")
+    CLDres <- multcomp::cld(lm_em, Letters = LETTERS)
+    plot1 <- plot1 + geom_text(data = CLDres, aes(x = .data[[groupvars]],
+                                                  y = CLDvlocation,
+                                                  label = .group), col = CLDcolor) +
+      labs(title = paste0("Enhanced stripchart of ", measurevar, " by ", groupvars, " with CLD from Tukey's HSD"))
+  }
 
   return(plot1)
 
